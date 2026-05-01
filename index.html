@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Found and Favoured</title>
+    
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="manifest" href="data:application/manifest+json,{'name':'Found and Favoured','short_name':'F&F','display':'standalone','start_url':'/','background_color':'#fdf5f7','theme_color':'#901d3d'}">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Playfair+Display:ital,wght@0,700;1,700&display=swap');
+
+        :root { 
+            --soft-pink: #fdf5f7; 
+            --deep-rose: #901d3d; 
+            --gold-accent: #d4af37;
+            --btn-gradient: linear-gradient(135deg, #f8d7da 0%, #fbc2eb 100%);
+        }
+
+        body { margin: 0; padding: 0; font-family: 'Poppins', sans-serif; background: var(--soft-pink); overflow-x: hidden; }
+
+        /* DICTO SAME FLORAL BACKGROUND PATTERN */
+        .floral-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: var(--soft-pink);
+            background-image: radial-gradient(circle at 50% 50%, rgba(144, 29, 61, 0.03) 1px, transparent 1px);
+            background-size: 30px 30px;
+            z-index: -1;
+        }
+
+        /* 1. SPLASH PAGE (FLORAL LOGO) */
+        #splash-page {
+            position: fixed; inset: 0; background: #fff;
+            display: flex; flex-direction: column; justify-content: center;
+            align-items: center; z-index: 10000;
+        }
+        .splash-logo-container {
+            width: 300px; height: 300px;
+            background: url('https://i.ibb.co/VWV0p0p/IMG-20260501-105301.jpg') no-repeat center;
+            background-size: contain; animation: pulse 2s infinite ease-in-out;
+        }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+
+        /* 2. HOME PAGE STRUCTURE */
+        #home-page { display: none; padding-top: 10px; animation: fadeIn 0.8s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .header-banner {
+            margin: 15px; background: #fff; border: 2px solid var(--gold-accent);
+            border-radius: 15px; padding: 20px; text-align: center;
+            box-shadow: 0 10px 30px rgba(144, 29, 61, 0.1);
+        }
+        .header-banner h1 { font-family: 'Playfair Display'; color: var(--deep-rose); margin: 0; font-size: 24px; }
+        .header-banner p { font-family: 'Playfair Display'; font-style: italic; font-size: 14px; margin: 5px 0 0; color: #666; }
+
+        /* BUTTONS WITH SOFT GRADIENT */
+        .menu-grid { padding: 0 20px; display: grid; grid-template-columns: 1fr; gap: 12px; }
+        .pink-pill-btn {
+            background: var(--btn-gradient); border: 1.5px solid var(--deep-rose);
+            border-radius: 50px; padding: 15px; font-weight: 600;
+            text-align: center; font-size: 14px; color: var(--deep-rose);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); cursor: pointer;
+        }
+
+        /* PRODUCT ROW (QUALITATIVE SELECTIONS) */
+        .section-title { padding: 20px; font-weight: 600; color: #333; font-size: 18px; }
+        .product-row { display: flex; overflow-x: auto; gap: 15px; padding: 0 20px; scrollbar-width: none; }
+        .product-row::-webkit-scrollbar { display: none; }
+        
+        .product-card {
+            min-width: 170px; background: #fff; border-radius: 20px;
+            padding: 12px; border: 1px solid rgba(144, 29, 61, 0.1);
+            text-align: center; box-shadow: 0 8px 20px rgba(0,0,0,0.03);
+        }
+        .product-card img { width: 100%; height: 200px; object-fit: cover; border-radius: 15px; }
+        .view-deal-btn { background: var(--deep-rose); color: #fff; border: none; width: 100%; padding: 10px; border-radius: 50px; font-size: 12px; margin-top: 10px; font-weight: 600; }
+
+        /* SEARCH & CATEGORY (FUNCTIONAL) */
+        .bottom-grid { margin: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .search-container {
+            grid-column: span 2; background: #fff; border: 2px solid var(--gold-accent);
+            border-radius: 50px; padding: 12px 25px; display: flex; align-items: center;
+        }
+        .search-container input { border: none; width: 100%; outline: none; margin-left: 10px; font-size: 15px; }
+
+        /* FLOATING SIDEBAR (AS PER IMAGE) */
+        .float-bar {
+            position: fixed; right: 15px; bottom: 100px;
+            display: flex; flex-direction: column; gap: 15px;
+        }
+        .float-btn {
+            display: flex; flex-direction: column; align-items: center;
+        }
+        .btn-circle {
+            width: 55px; height: 55px; background: var(--btn-gradient);
+            border: 2px solid var(--gold-accent); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 22px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .btn-label { font-size: 8px; font-weight: bold; text-transform: uppercase; margin-top: 4px; text-align: center; line-height: 1.1; }
+
+        /* CART NOTIFICATION */
+        #cart-alert {
+            display: none; position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            background: var(--deep-rose); color: #fff; padding: 12px 30px; border-radius: 50px;
+            z-index: 20000; font-size: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="floral-bg"></div>
+
+    <div id="splash-page">
+        <div class="splash-logo-container"></div>
+        <div style="color: var(--deep-rose); margin-top: 20px; font-family: 'Playfair Display'; font-size: 22px; font-weight: 600;">Radhe Radhe</div>
+    </div>
+
+    <div id="home-page">
+        <div class="header-banner">
+            <h1>Found and Favoured</h1>
+            <p>radhe radhe</p>
+        </div>
+
+        <div class="menu-grid">
+            <div class="pink-pill-btn">PIN PRODUCTS ✨</div>
+            <div class="pink-pill-btn" style="background:#fff">TRENDING</div>
+            <div class="pink-pill-btn" style="background:#fff">PROFESSIONAL</div>
+            <div class="pink-pill-btn" style="background:#fff">COMBO OUTFITS</div>
+        </div>
+
+        <div class="section-title">✨ Favoured Choice</div>
+        <div class="product-row">
+            <div class="product-card">
+                <img src="https://i.ibb.co/VWV0p0p/IMG-20260501-105301.jpg" alt="Item">
+                <p style="font-size:12px; margin:5px 0;">Qualitative selections</p>
+                <button class="view-deal-btn" onclick="triggerCart('Found Outfit')">View Deal</button>
+            </div>
+            <div class="product-card">
+                <img src="https://i.ibb.co/VWV0p0p/IMG-20260501-105301.jpg" alt="Item">
+                <p style="font-size:12px; margin:5px 0;">Qualitative selections</p>
+                <button class="view-deal-btn" onclick="triggerCart('Found Jewelry')">View Deal</button>
+            </div>
+        </div>
+
+        <div class="bottom-grid">
+            <div class="search-container">
+                <span>🔍</span>
+                <input type="text" placeholder="Dhoondhiye apna favour...">
+            </div>
+            <div class="pink-pill-btn" style="padding:10px; font-size:12px;">CATEGORIES ▾</div>
+            <div class="pink-pill-btn" style="padding:10px; font-size:12px; background:#fff;">FASHION</div>
+        </div>
+
+        <div class="float-bar">
+            <div class="float-btn" onclick="triggerCart('Bag')">
+                <div class="btn-circle">🛒</div>
+                <div class="btn-label">ADD TO<br>CART</div>
+            </div>
+            <div class="float-btn">
+                <div class="btn-circle">🏷️</div>
+                <div class="btn-label">DISCOUNT<br>OFFERS</div>
+            </div>
+            <div class="float-btn">
+                <div class="btn-circle">⭐</div>
+                <div class="btn-label">BEST<br>SELLERS</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="cart-alert">Bag mein add ho gaya! ✨</div>
+
+    <script>
+        // Splash Screen Logic (3 Seconds)
+        window.onload = function() {
+            setTimeout(function() {
+                const splash = document.getElementById('splash-page');
+                const home = document.getElementById('home-page');
+                splash.style.transition = 'opacity 0.8s ease-out';
+                splash.style.opacity = '0';
+                setTimeout(() => {
+                    splash.style.display = 'none';
+                    home.style.display = 'block';
+                }, 800);
+            }, 3000);
+        };
+
+        // Smooth Cart Notification
+        function triggerCart(name) {
+            const alertBox = document.getElementById('cart-alert');
+            alertBox.style.display = 'block';
+            setTimeout(() => { alertBox.style.display = 'none'; }, 2500);
+        }
+
+        // Add to Home Screen Functionality
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+        });
+    </script>
+</body>
+</html>
+
