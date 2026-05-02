@@ -11,253 +11,93 @@
     
     <style>
         :root {
-            --bg-color: #fdf2f2; /* Light pinkish background from image */
+            --bg-pink: #fdf2f2; /* Light pink background from image */
             --maroon: #5a3036;
             --btn-grad: linear-gradient(135deg, #fce4e4, #f8d7da);
-            --border-color: #f2bbc0;
+            --border-pink: #f2bbc0;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Arial, sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
         
         body { 
-            background-color: var(--bg-color); 
+            background-color: var(--bg-pink); 
             color: var(--maroon); 
             overflow-x: hidden;
             scroll-behavior: smooth;
         }
 
-        /* --- 1. SPLASH SCREEN --- */
+        /* --- 1. SPLASH SCREEN (Hexagon Logo) --- */
         #splash-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
             background: white; display: flex; justify-content: center; align-items: center;
             z-index: 9999; transition: opacity 0.8s ease;
         }
-        #splash-screen img { width: 60%; max-width: 300px; border-radius: 50%; }
+        #splash-screen img { width: 75%; max-width: 350px; }
         .fade-out { opacity: 0; pointer-events: none; }
 
-        /* --- 2. HEADER & LOGO (Centered & Medium Size) --- */
+        /* --- 2. HEADER (Hexagon Logo & Pink Background) --- */
         header {
-            background: white;
-            padding: 20px 10px;
+            background-color: var(--bg-pink); 
+            padding: 15px 10px;
             text-align: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
             position: sticky; top: 0; z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.03); 
         }
         .main-logo {
-            width: 150px; /* Medium size logo */
-            height: 150px;
-            border-radius: 50%; /* Circle shape */
-            object-fit: cover;
+            width: 240px; /* Medium size as requested */
+            height: auto;
+            object-fit: contain;
             display: block;
             margin: 0 auto;
             cursor: pointer;
-            border: 2px solid var(--border-color);
         }
 
         /* --- 3. SEARCH BAR --- */
-        .search-wrap { padding: 15px; display: flex; justify-content: center; }
+        .search-wrap { padding: 15px 20px; display: flex; justify-content: center; }
         .search-inner {
             background: white; width: 100%; max-width: 500px;
-            display: flex; align-items: center; padding: 10px 20px;
-            border-radius: 30px; border: 1.5px solid var(--border-color);
+            display: flex; align-items: center; padding: 12px 20px;
+            border-radius: 30px; border: 1.5px solid var(--border-pink);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
         }
         .search-inner input { border: none; outline: none; width: 100%; font-size: 16px; margin-left: 10px; color: var(--maroon); }
 
-        /* --- 4. FUNCTIONAL KEYS (From Home Image) --- */
-        .keys-grid {
+        /* --- 4. FUNCTIONAL KEYS (Modern Pills) --- */
+        .keys-container {
             display: flex; flex-direction: column; gap: 12px;
             padding: 10px 20px; max-width: 450px; margin: 0 auto;
         }
         .key-item {
             background: var(--btn-grad);
-            border: 1.5px solid var(--border-color);
+            border: 1.5px solid var(--border-pink);
             padding: 18px; border-radius: 50px;
             text-align: center; font-weight: bold;
             cursor: pointer; transition: 0.2s;
-            text-transform: uppercase; letter-spacing: 1px;
+            text-transform: uppercase;
             box-shadow: 0 4px 6px rgba(0,0,0,0.04);
+            color: var(--maroon);
         }
-        .key-item:active { transform: scale(0.96); opacity: 0.8; }
+        .key-item:active { transform: scale(0.96); opacity: 0.9; }
 
-        /* --- 5. CATEGORIES (Horizontal & Vertical) --- */
+        /* --- 5. CATEGORIES SECTION --- */
         .cat-box {
-            background: white; margin: 20px auto; width: 92%; max-width: 550px;
-            border-radius: 20px; border: 1px solid var(--border-color); overflow: hidden;
+            background: white; margin: 25px auto; width: 92%; max-width: 550px;
+            border-radius: 20px; border: 1px solid var(--border-pink); overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.03);
         }
-        .cat-title-bar { background: var(--btn-grad); padding: 12px; font-weight: bold; text-align: center; border-bottom: 1px solid var(--border-color); }
-        
-        .cat-content-grid { display: grid; grid-template-columns: 1fr 1fr; padding: 15px; gap: 15px; }
-        .cat-column h4 { font-size: 14px; margin-bottom: 10px; border-bottom: 1px solid var(--bg-color); padding-bottom: 5px; }
+        .cat-title { 
+            background: var(--btn-grad); padding: 15px; 
+            font-weight: bold; text-align: center; 
+            border-bottom: 1px solid var(--border-pink);
+        }
+        .cat-grid { display: grid; grid-template-columns: 1fr 1fr; padding: 20px; gap: 20px; }
+        .cat-col h4 { font-size: 14px; margin-bottom: 12px; border-bottom: 2px solid var(--bg-pink); padding-bottom: 5px; }
         .cat-link { 
-            display: flex; justify-content: space-between; font-size: 13px;
-            padding: 8px 0; cursor: pointer; color: #444; border-bottom: 0.5px solid #fafafa;
+            display: flex; justify-content: space-between; font-size: 13px; 
+            padding: 10px 0; cursor: pointer; border-bottom: 0.5px solid #f9f9f9; 
         }
-        .cat-link span { background: var(--bg-color); padding: 0 6px; border-radius: 10px; font-size: 11px; }
+        .cat-link span { background: var(--bg-pink); padding: 2px 8px; border-radius: 10px; font-size: 11px; }
 
-        /* --- 6. FLOATING NAVIGATION --- */
-        .bottom-nav {
-            position: fixed; bottom: 20px; right: 20px;
-            display: flex; flex-direction: column; gap: 12px; z-index: 998;
-        }
-        .nav-circle {
-            background: white; width: 60px; height: 60px; border-radius: 50%;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            font-size: 9px; font-weight: bold; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            cursor: pointer; border: 1.5px solid var(--border-color);
-        }
-        .nav-circle i { font-size: 20px; margin-bottom: 2px; }
-
-        /* --- 7. VIEWS & ANIMATIONS --- */
-        .page-view { display: none; padding: 20px; animation: slideUp 0.4s ease-out; }
-        .active-view { display: block; }
-        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-
-        .product-list {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            gap: 15px; margin-top: 20px;
-        }
-        .item-card { background: white; padding: 10px; border-radius: 15px; text-align: center; border: 1px solid #eee; }
-        .item-card img { width: 100%; border-radius: 10px; height: 140px; object-fit: cover; }
-        .buy-btn { width: 100%; padding: 10px; background: var(--maroon); color: white; border: none; border-radius: 8px; margin-top: 10px; font-weight: bold; }
-
-        /* PWA Install Notification */
-        #pwa-btn {
-            display: none; position: fixed; top: 15px; right: 15px;
-            background: var(--maroon); color: white; border: none;
-            padding: 8px 16px; border-radius: 25px; font-size: 12px; z-index: 2000;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        }
-
-        footer { text-align: center; padding: 40px 20px; font-size: 12px; color: #888; background: white; margin-top: 30px; }
-    </style>
-</head>
-<body>
-
-    <div id="splash-screen">
-        <img src="IMG_20260501_105301.jpg" alt="Logo">
-    </div>
-
-    <button id="pwa-btn" onclick="pwaInstall()">Install App</button>
-
-    <header>
-        <img src="IMG_20260501_105301.jpg" class="main-logo" alt="Logo" onclick="navTo('home')">
-    </header>
-
-    <div id="home-view" class="page-view active-view">
-        <div class="search-wrap">
-            <div class="search-inner">
-                <i class="fa fa-search" style="color: #bbb;"></i>
-                <input type="text" placeholder="SEARCH PRODUCTS..." oninput="autoSearch(this.value)">
-            </div>
-        </div>
-
-        <div class="keys-grid">
-            <div class="key-item" onclick="viewCat('Favoured Choice')">Pin Products</div>
-            <div class="key-item" onclick="viewCat('Trending')">Trending</div>
-            <div class="key-item" onclick="viewCat('Professional')">Professional</div>
-            <div class="key-item" onclick="viewCat('Combo Outfits')">Combo Outfits</div>
-        </div>
-
-        <div class="cat-box">
-            <div class="cat-title-bar">CATEGORIES <i class="fa fa-chevron-down" style="font-size:10px;"></i></div>
-            <div class="cat-content-grid">
-                <div class="cat-column">
-                    <h4>FASHION</h4>
-                    <div class="cat-link" onclick="viewCat('Ethnic')">Ethnic <span>6</span></div>
-                    <div class="cat-link" onclick="viewCat('Western')">Western <span>3</span></div>
-                </div>
-                <div class="cat-column">
-                    <h4>ELECTRONICS</h4>
-                    <div class="cat-link" onclick="viewCat('Mobiles')">Mobiles <span>9</span></div>
-                    <div class="cat-link" onclick="viewCat('Accessories')">Accessories <span>3</span></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="list-view" class="page-view">
-        <div onclick="navTo('home')" style="cursor:pointer; font-weight:bold; color:var(--maroon); margin-bottom:15px;">
-            <i class="fa fa-arrow-left"></i> BACK TO HOME
-        </div>
-        <h2 id="view-title" style="font-size: 20px; text-transform: uppercase;">Category</h2>
-        <div class="product-list" id="items-container">
-            </div>
-    </div>
-
-    <div id="cart-view" class="page-view">
-        <div onclick="navTo('home')" style="cursor:pointer; font-weight:bold; color:var(--maroon); margin-bottom:15px;">
-            <i class="fa fa-arrow-left"></i> BACK
-        </div>
-        <h2>Your Shopping Cart</h2>
-        <div id="cart-data" style="margin-top: 30px; text-align: center; color: #999;">
-            Cart is empty. Start shopping!
-        </div>
-    </div>
-
-    <div class="bottom-nav">
-        <div class="nav-circle" onclick="navTo('cart')"><i class="fa fa-shopping-cart"></i>CART</div>
-        <div class="nav-circle" onclick="viewCat('Offers')"><i class="fa fa-gift"></i>OFFERS</div>
-    </div>
-
-    <footer>
-        <p>ABOUT US | CONTACT | DISCLOSURE</p>
-        <p style="margin-top: 10px;">&copy; 2026 Found and Favoured | Radhe Radhe</p>
-    </footer>
-
-    <script>
-        let pwaEvent;
-
-        // --- SPLASH TIMER ---
-        window.onload = () => {
-            setTimeout(() => {
-                document.getElementById('splash-screen').classList.add('fade-out');
-            }, 2800);
-        };
-
-        // --- NAVIGATION LOGIC ---
-        function navTo(id) {
-            document.querySelectorAll('.page-view').forEach(p => p.classList.remove('active-view'));
-            document.getElementById(id + '-view').classList.add('active-view');
-            window.scrollTo(0, 0);
-        }
-
-        function viewCat(name) {
-            navTo('list');
-            document.getElementById('view-title').innerText = name;
-            const container = document.getElementById('items-container');
-            // Sample Product
-            container.innerHTML = `
-                <div class="item-card">
-                    <img src="IMG_20260501_105301.jpg" alt="item">
-                    <p style="font-weight:bold; margin-top:8px;">${name} Item</p>
-                    <p style="font-size:12px; color:#777;">Quality Selection</p>
-                    <button class="buy-btn" onclick="alert('Added to Cart!')">ADD</button>
-                </div>
-            `;
-        }
-
-        function autoSearch(val) {
-            if(val.length > 2) viewCat("Search: " + val);
-        }
-
-        // --- PWA LOGIC ---
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            pwaEvent = e;
-            document.getElementById('pwa-btn').style.display = 'block';
-        });
-
-        function pwaInstall() {
-            if (pwaEvent) {
-                pwaEvent.prompt();
-                pwaEvent.userChoice.then((choice) => {
-                    if (choice.outcome === 'accepted') {
-                        document.getElementById('pwa-btn').style.display = 'none';
-                    }
-                });
-            }
-        }
-    </script>
-</body>
-                                                      </html>
-    
+        /* --- 6. FLOATING NAVIGATION (Cart & Offers) --- */
+        .side-nav { position: fixed; bottom: 25px; right
+                            
