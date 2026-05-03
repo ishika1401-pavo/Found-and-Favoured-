@@ -26,22 +26,24 @@
             scroll-behavior: smooth;
         }
 
-        /* --- 1. SPLASH SCREEN --- */
+        /* --- 1. SPLASH SCREEN (Grey areas fixed with white background) --- */
         #splash-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
-            background: white; display: flex; justify-content: center; align-items: center;
+            background: #ffffff; /* Pure White background */
+            display: flex; justify-content: center; align-items: center;
             z-index: 9999; transition: opacity 0.8s ease;
         }
         #splash-screen img { 
-            width: 80%; 
-            max-width: 300px; 
-            height: auto;
+            width: 100%; 
+            height: 100%; 
+            max-width: 400px; 
+            object-fit: contain; /* Isse image kategi nahi aur poori dikhegi */
         }
         .fade-out { opacity: 0; pointer-events: none; }
 
         /* --- 2. HEADER --- */
         header {
-            background-color: var(--bg-pink); 
+            background-color: #ffffff; /* Logo area pure white for seamless look */
             padding: 10px;
             text-align: center;
             position: sticky; top: 0; z-index: 1000;
@@ -49,7 +51,7 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.03); 
         }
         .main-logo {
-            height: 85px; 
+            height: 100px; /* Slightly increased for better visibility */
             width: auto;
             object-fit: contain;
             display: block;
@@ -160,7 +162,7 @@
         </div>
         <h2 id="list-title">Category</h2>
         <div id="items-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-top:20px;">
-            </div>
+        </div>
     </div>
 
     <div class="side-nav">
@@ -187,7 +189,6 @@
         function openCat(name) {
             goTo('list');
             document.getElementById('list-title').innerText = name;
-            // Updated image in dynamic product card
             document.getElementById('items-grid').innerHTML = `
                 <div style="background:white; padding:12px; border-radius:15px; text-align:center; border:1px solid var(--border-pink);">
                     <img src="1777734408931.png" style="width:100%; height:120px; object-fit:contain;">
@@ -200,5 +201,5 @@
         function doSearch(v) { if(v.length > 2) openCat("Search: " + v); }
     </script>
 </body>
-        </html>
-    
+    </html>
+
