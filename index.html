@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="hi">
 <head>
@@ -11,7 +12,7 @@
     
     <style>
         :root {
-            --bg-pink: #fdf2f2; /* Aapki theme ka pink colour */
+            --bg-pink: #fdf2f2; 
             --maroon: #5a3036;
             --btn-grad: linear-gradient(135deg, #fce4e4, #f8d7da);
             --border-pink: #f2bbc0;
@@ -26,28 +27,31 @@
             scroll-behavior: smooth;
         }
 
-        /* --- 1. SPLASH SCREEN --- */
+        /* --- 1. SPLASH SCREEN (Logo Image Fix) --- */
         #splash-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
             background: white; display: flex; justify-content: center; align-items: center;
             z-index: 9999; transition: opacity 0.8s ease;
         }
-        #splash-screen img { width: 75%; max-width: 350px; }
+        #splash-screen img { 
+            width: 80%; 
+            max-width: 300px; 
+            object-fit: contain;
+        }
         .fade-out { opacity: 0; pointer-events: none; }
 
-        /* --- 2. HEADER (Pink Theme) --- */
+        /* --- 2. HEADER (Logo Image Fix) --- */
         header {
-            background-color: var(--bg-pink); /* Header background ab pink hai */
-            padding: 15px 10px;
+            background-color: var(--bg-pink); 
+            padding: 10px;
             text-align: center;
             position: sticky; top: 0; z-index: 1000;
-            /* Border-bottom thoda deep pink rakha hai taaki header alag dikhe */
             border-bottom: 1.5px solid var(--border-pink); 
             box-shadow: 0 2px 10px rgba(0,0,0,0.03); 
         }
         .main-logo {
-            width: 240px; 
-            height: auto;
+            height: 80px; /* Logo ki height adjust ki hai */
+            width: auto;
             object-fit: contain;
             display: block;
             margin: 0 auto;
@@ -80,17 +84,15 @@
         }
         .key-item:active { transform: scale(0.96); opacity: 0.8; }
 
-        /* --- 5. CATEGORIES SECTION --- */
+        /* --- 5. CATEGORIES --- */
         .cat-box {
             background: white; margin: 25px auto; width: 92%; max-width: 550px;
             border-radius: 20px; border: 1px solid var(--border-pink); overflow: hidden;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
         }
         .cat-title { background: var(--btn-grad); padding: 15px; font-weight: bold; text-align: center; border-bottom: 1px solid var(--border-pink); }
         .cat-grid { display: grid; grid-template-columns: 1fr 1fr; padding: 20px; gap: 20px; }
         .cat-col h4 { font-size: 14px; margin-bottom: 10px; border-bottom: 2px solid var(--bg-pink); padding-bottom: 5px; }
         .cat-link { display: flex; justify-content: space-between; font-size: 13px; padding: 10px 0; cursor: pointer; border-bottom: 0.5px solid #f9f9f9; }
-        .cat-link span { background: var(--bg-pink); padding: 2px 8px; border-radius: 10px; font-size: 11px; }
 
         /* --- 6. FLOATING NAV --- */
         .side-nav { position: fixed; bottom: 25px; right: 20px; display: flex; flex-direction: column; gap: 15px; z-index: 998; }
@@ -107,22 +109,17 @@
         .active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        #install-btn {
-            display: none; position: fixed; top: 15px; right: 15px;
-            background: var(--maroon); color: white; border: none;
-            padding: 8px 18px; border-radius: 25px; font-size: 12px; z-index: 2000;
-        }
-
         footer { text-align: center; padding: 40px; font-size: 12px; color: #999; background: white; margin-top: 40px; }
     </style>
 </head>
 <body>
 
-    <div id="splash-screen"><img src="1777734438717.png" alt="Logo"></div>
-    <button id="install-btn" onclick="pwaInstall()">Install App</button>
+    <div id="splash-screen">
+        <img src="1777734438717.png" alt="Found and Favoured Logo">
+    </div>
 
     <header>
-        <img src="1777734438717.png" class="main-logo" onclick="goTo('home')">
+        <img src="1777734438717.png" class="main-logo" alt="Logo" onclick="goTo('home')">
     </header>
 
     <div id="home-view" class="view active">
@@ -156,11 +153,10 @@
 
     <div id="list-view" class="view">
         <div onclick="goTo('home')" style="cursor:pointer; font-weight:bold; margin-bottom:20px; color: var(--maroon);">
-            <i class="fa fa-arrow-left"></i> BACK TO HOME
+            <i class="fa fa-arrow-left"></i> BACK
         </div>
         <h2 id="list-title">Category</h2>
-        <div id="items-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-top:20px;">
-            </div>
+        <div id="items-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-top:20px;"></div>
     </div>
 
     <div id="cart-view" class="view">
@@ -177,8 +173,12 @@
     <footer>&copy; 2026 Found and Favoured | Radhe Radhe</footer>
 
     <script>
-        let pwaIn;
-        window.onload = () => { setTimeout(() => { document.getElementById('splash-screen').classList.add('fade-out'); }, 2800); };
+        // Splash Screen Timer
+        window.onload = () => { 
+            setTimeout(() => { 
+                document.getElementById('splash-screen').classList.add('fade-out'); 
+            }, 2800); 
+        };
         
         function goTo(id) {
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
@@ -191,22 +191,15 @@
             document.getElementById('list-title').innerText = name;
             document.getElementById('items-grid').innerHTML = `
                 <div style="background:white; padding:12px; border-radius:15px; text-align:center; border:1px solid var(--border-pink);">
-                    <img src="1777734438717.png" style="width:100%; height:140px; object-fit:contain; border-radius:10px; background:#f9f9f9;">
-                    <p style="font-weight:bold; margin-top:10px; font-size:14px;">${name} Item</p>
-                    <button style="width:100%; padding:8px; background:var(--maroon); color:white; border:none; border-radius:8px; margin-top:10px;">ADD TO CART</button>
+                    <img src="1777734438717.png" style="width:100%; height:120px; object-fit:contain;">
+                    <p style="font-weight:bold; margin-top:10px;">${name} Item</p>
+                    <button style="width:100%; padding:8px; background:var(--maroon); color:white; border:none; border-radius:8px; margin-top:10px;">ADD</button>
                 </div>
             `;
         }
 
         function doSearch(v) { if(v.length > 2) openCat("Search: " + v); }
-
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault(); pwaIn = e;
-            document.getElementById('install-btn').style.display = 'block';
-        });
-
-        function pwaInstall() { if(pwaIn) pwaIn.prompt(); }
     </script>
 </body>
-    </html>
-
+                                                                                            </html>
+                                                                                            
