@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <title>CEO Panel - Add Products</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #fff0f5; padding: 20px; display: flex; justify-content: center; }
+        .admin-card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); width: 100%; max-width: 400px; border-top: 5px solid #d63384; }
+        h2 { color: #d63384; text-align: center; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+        button { width: 100%; padding: 15px; background-color: #d63384; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; }
+        button:hover { background-color: #b02a6a; }
+        #status { text-align: center; margin-top: 15px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="admin-card">
+    <h2>📌 CEO Pannel - Pin Product</h2>
+    <input type="text" id="pName" placeholder="Product ka Naam">
+    <input type="text" id="pPrice" placeholder="Price (e.g. ₹999)">
+    <input type="text" id="pLink" placeholder="Amazon Affiliate Link">
+    <button id="pinBtn">Pin to Firebase Database</button>
+    <p id="status"></p>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyDc1CiySPp952UivCtx",
+        authDomain: "ceo-pannel.firebaseapp.com",
+        projectId: "ceo-pannel",
+        storageBucket: "ceo-pannel.firebasestorage.app",
+        messagingSenderId: "178993048874",
+        appId: "1:178993048874:web:6176d4"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    document.getElementById('pinBtn').addEventListener('click', async () => {
+        const name = document.getElementById('pName').value;
+        const price = document.getElementById('pPrice').value;
+        const link = document.getElementById('pLink').value;
+        const status = document.getElementById('status');
+
+        if(name && price && link) {
+            status.innerText = "⏳ Saving to Firebase...";
+            try {
+                // Ye data aapke Firebase 'products' collection mein save hoga
+                await addDoc(collection(db, "products"), {
+                    name: name,
+                    price: price,
+                    url: link,
+                    date: new Date().toISOString()
+                });
+                status.style.color = "green";
+                status.innerText = "✅ Firebase mein save ho gaya!";
+                document.getElementById('pName').value = '';
+                document.getElementById('pPrice').value = '';
+                document.getElementById('pLink').value = '';
+            } catch (e) {
+                status.style.color = "red";
+                status.innerText = "❌ Error: " + e.message;
+            }
+        } else {
+            alert("Sari details bharo!");
+        }
+    });
+</script>
+</body>
+  </html>
+
