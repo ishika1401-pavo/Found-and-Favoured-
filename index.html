@@ -211,6 +211,52 @@
   const db = getFirestore(app);
 
   console.log("Success: Website is now connected to CEO Pannel Database!");
+        // 1. Firebase se data fetch karne ke tools mangwana
+import { collection, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+// 2. Naya Real-time openCat function jo database se connect hai
+window.openCat = function(categoryName) {
+    
+    // List screen par switch karega
+    goTo('list'); 
+    
+    // Title update karega
+    document.getElementById('list-title').innerText = categoryName;
+    
+    const grid = document.getElementById('items-grid');
+
+    // Jab tak data load ho raha hai
+    grid.innerHTML = '<p style="grid-column: 1 / -1; text-align:center; padding:20px; color:var(--maroon);">Loading ' + categoryName + '...</p>';
+
+    // Firebase Query: Sirf wahi products lao jo is category ke hain
+    const q = query(collection(db, "products"), where("category", "==", categoryName.toLowerCase()));
+
+    // Real-time Listener
+    onSnapshot(q, (querySnapshot) => {
+        grid.innerHTML = ""; 
+
+        if (querySnapshot.empty) {
+            grid.innerHTML = '<p style="grid-column: 1 / -1; text-align:center; padding:20px;">Is category mein abhi koi product nahi hai.</p>';
+            return;
+        }
+
+        querySnapshot.forEach((doc) => {
+            const item = doc.data();
+            
+            // Aapke design ke mutabiq responsive card
+            grid.innerHTML += `
+                <div style="background:white; padding:12px; border-radius:15px; border:1.5px solid var(--border-pink); box-shadow: 0 4px 10px rgba(0,0,0,0.05); display:flex; flex-direction:column; align-items:center;">
+                    <img src="${item.url}" style="width:100%; height:120px; object-fit:contain; border-radius:10px;">
+                    <h4 style="margin:10px 0 5px 0; font-size:14px; color:var(--maroon); text-align:center;">${item.name}</h4>
+                    <p style="font-weight:bold; color:var(--maroon); font-size:16px;">₹${item.price}</p>
+                    <button onclick="window.open('${item.url}', '_blank')" style="width:100%; padding:8px; background:var(--btn-grad); border:none; border-radius:8px; color:white; font-weight:bold; margin-top:auto; cursor:pointer;">
+                        Details
+                    </button>
+                </div>`;
+        });
+    });
+};
+        
   
   // 'db' variable ka use karke ab aap products 'Pin' kar sakti hain
     </script>
