@@ -1,75 +1,93 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CEO Panel - Add Products</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #fff0f5; padding: 20px; display: flex; justify-content: center; }
-        .admin-card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); width: 100%; max-width: 400px; border-top: 5px solid #d63384; }
-        h2 { color: #d63384; text-align: center; }
-        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
-        button { width: 100%; padding: 15px; background-color: #d63384; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; }
-        button:hover { background-color: #b02a6a; }
-        #status { text-align: center; margin-top: 15px; font-weight: bold; }
+        body { font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f4; }
+        .container { max-width: 400px; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        input, select, button { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        button { background-color: #28a745; color: white; border: none; cursor: pointer; font-weight: bold; }
+        button:hover { background-color: #218838; }
+        h2 { text-align: center; color: #333; }
     </style>
 </head>
 <body>
 
-<div class="admin-card">
-    <h2>📌 CEO Pannel - Pin Product</h2>
-    <input type="text" id="pName" placeholder="Product ka Naam">
-    <input type="text" id="pPrice" placeholder="Price (e.g. ₹999)">
-    <input type="text" id="pLink" placeholder="Amazon Affiliate Link">
-    <button id="pinBtn">Pin to Firebase Database</button>
-    <p id="status"></p>
+<div class="container">
+    <h2>CEO Admin Panel</h2>
+    
+    <input type="text" id="p_name" placeholder="Product Name (e.g. Blue Dress)">
+    
+    <input type="number" id="p_price" placeholder="Price (e.g. 599)">
+    
+    <input type="text" id="p_url" placeholder="Image URL (Amazon/Drive Link)">
+    
+    <label for="p_category">Select Category:</label>
+    <select id="p_category">
+        <option value="outfits">Outfits</option>
+        <option value="shoes">Shoes</option>
+        <option value="trending">Trending</option>
+        <option value="accessories">Accessories</option>
+    </select>
+
+    <button onclick="uploadProduct()">Publish Product</button>
 </div>
 
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 
+<script>
+    // Yahan apni Firebase Config daalein (Jo aapke purane code mein thi)
     const firebaseConfig = {
-        apiKey: "AIzaSyDc1CiySPp952UivCtx",
-        authDomain: "ceo-pannel.firebaseapp.com",
-        projectId: "ceo-pannel",
-        storageBucket: "ceo-pannel.firebasestorage.app",
-        messagingSenderId: "178993048874",
-        appId: "1:178993048874:web:6176d4"
+        apiKey: "YOUR_API_KEY",
+        authDomain: "YOUR_PROJECT.firebaseapp.com",
+        projectId: "YOUR_PROJECT_ID",
+        storageBucket: "YOUR_PROJECT.appspot.com",
+        messagingSenderId: "YOUR_ID",
+        appId: "YOUR_APP_ID"
     };
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
 
-    document.getElementById('pinBtn').addEventListener('click', async () => {
-        const name = document.getElementById('pName').value;
-        const price = document.getElementById('pPrice').value;
-        const link = document.getElementById('pLink').value;
-        const status = document.getElementById('status');
+    function uploadProduct() {
+        // Form se data nikalna
+        const name = document.getElementById('p_name').value;
+        const price = document.getElementById('p_price').value;
+        const url = document.getElementById('p_url').value;
+        const category = document.getElementById('p_category').value;
 
-        if(name && price && link) {
-            status.innerText = "⏳ Saving to Firebase...";
-            try {
-                // Ye data aapke Firebase 'products' collection mein save hoga
-                await addDoc(collection(db, "products"), {
-                    name: name,
-                    price: price,
-                    url: link,
-                    date: new Date().toISOString()
-                });
-                status.style.color = "green";
-                status.innerText = "✅ Firebase mein save ho gaya!";
-                document.getElementById('pName').value = '';
-                document.getElementById('pPrice').value = '';
-                document.getElementById('pLink').value = '';
-            } catch (e) {
-                status.style.color = "red";
-                status.innerText = "❌ Error: " + e.message;
-            }
-        } else {
-            alert("Sari details bharo!");
+        // Validation check
+        if(!name || !price || !url) {
+            alert("Please fill all fields!");
+            return;
         }
-    });
+
+        // Firebase Firestore mein save karna
+        db.collection("products").add({
+            name: name,
+            price: price,
+            url: url,
+            category: category, // Yeh automatically field bana dega
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        })
+        .then(() => {
+            alert("Product successfully added to: " + category);
+            // Form clear karna
+            document.getElementById('p_name').value = "";
+            document.getElementById('p_price').value = "";
+            document.getElementById('p_url').value = "";
+        })
+        .catch((error) => {
+            console.error("Error: ", error);
+            alert("Something went wrong!");
+        });
+    }
 </script>
+
 </body>
-  </html>
+</html>
 
