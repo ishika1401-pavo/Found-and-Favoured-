@@ -230,7 +230,7 @@ window.openCat = function(categoryName) {
 
     // Firebase Query: Sirf wahi products lao jo is category ke hain
     const q = query(collection(db, "products"), where("category", "==", categoryName.toLowerCase()));
-
+    
     // Real-time Listener
     onSnapshot(q, (querySnapshot) => {
         grid.innerHTML = ""; 
