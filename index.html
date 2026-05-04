@@ -201,6 +201,32 @@
 
         function doSearch(v) { if(v.length > 2) openCat("Search: " + v); }
     </script>
+    <script type="module">
+  // Firebase SDKs ko import karna
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getFirestore } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+  // Aapki specific Firebase config details
+  const firebaseConfig = {
+    apiKey: "AIzaSyDc1CiySPp952UivCtx",
+    authDomain: "ceo-pannel.firebaseapp.com",
+    projectId: "ceo-pannel",
+    storageBucket: "ceo-pannel.firebasestorage.app",
+    messagingSenderId: "178993048874",
+    appId: "1:178993048874:web:6176d4"
+  };
+
+  // Firebase ko initialize karein
+  const app = initializeApp(firebaseConfig);
+  
+  // Firestore Database ka connection setup karein
+  const db = getFirestore(app);
+
+  console.log("Success: Website is now connected to CEO Pannel Database!");
+  
+  // 'db' variable ka use karke ab aap products 'Pin' kar sakti hain
+    </script>
+    
 </body>
     </html>
 
