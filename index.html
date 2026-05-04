@@ -187,19 +187,7 @@
             window.scrollTo(0,0);
         }
 
-        function openCat(name) {
-            goTo('list');
-            document.getElementById('list-title').innerText = name;
-            document.getElementById('items-grid').innerHTML = `
-                <div style="background:white; padding:12px; border-radius:15px; text-align:center; border:1px solid var(--border-pink);">
-                    <img src="1777734408931.png" style="width:100%; height:120px; object-fit:contain;">
-                    <p style="font-weight:bold; margin-top:10px;">${name} Item</p>
-                    <button style="width:100%; padding:8px; background:var(--maroon); color:white; border:none; border-radius:8px; margin-top:10px;">ADD</button>
-                </div>
-            `;
-        }
-
-        function doSearch(v) { if(v.length > 2) openCat("Search: " + v); }
+                function doSearch(v) { if(v.length > 2) openCat("Search: " + v); }
     </script>
     <script type="module">
   // Firebase SDKs ko import karna
