@@ -229,7 +229,8 @@ window.openCat = function(categoryName) {
     grid.innerHTML = '<p style="grid-column: 1 / -1; text-align:center; padding:20px; color:var(--maroon);">Loading ' + categoryName + '...</p>';
 
     // Firebase Query: Sirf wahi products lao jo is category ke hain
-    const q = query(collection(db, "products"), where("category", "==", categoryName.toLowerCase()));
+  const q = query(collection(db, "products"));
+        
     
     // Real-time Listener
     onSnapshot(q, (querySnapshot) => {
