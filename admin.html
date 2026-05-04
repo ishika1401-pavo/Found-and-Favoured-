@@ -3,87 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CEO Panel - Add Products</title>
+    <title>CEO Panel - Corrected</title>
     <style>
-        body { font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f4; }
-        .container { max-width: 400px; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-        input, select, button { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-        button { background-color: #28a745; color: white; border: none; cursor: pointer; font-weight: bold; }
-        button:hover { background-color: #218838; }
-        h2 { text-align: center; color: #333; }
+        body { font-family: sans-serif; display: flex; justify-content: center; padding: 20px; background: #eee; }
+        .panel { background: white; padding: 20px; border-radius: 10px; width: 100%; max-width: 400px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        input, select, button { width: 100%; margin-bottom: 15px; padding: 12px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
+        button { background: #007bff; color: white; border: none; cursor: pointer; font-size: 16px; }
+        button:hover { background: #0056b3; }
+        h2 { text-align: center; margin-top: 0; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h2>CEO Admin Panel</h2>
+<div class="panel">
+    <h2>CEO Panel</h2>
+    <input type="text" id="name" placeholder="Product Name">
+    <input type="number" id="price" placeholder="Price">
+    <input type="text" id="url" placeholder="Image URL">
     
-    <input type="text" id="p_name" placeholder="Product Name (e.g. Blue Dress)">
-    
-    <input type="number" id="p_price" placeholder="Price (e.g. 599)">
-    
-    <input type="text" id="p_url" placeholder="Image URL (Amazon/Drive Link)">
-    
-    <label for="p_category">Select Category:</label>
-    <select id="p_category">
+    <label>Category Chunein:</label>
+    <select id="category">
         <option value="outfits">Outfits</option>
         <option value="shoes">Shoes</option>
-        <option value="trending">Trending</option>
         <option value="accessories">Accessories</option>
     </select>
 
-    <button onclick="uploadProduct()">Publish Product</button>
+    <button onclick="publishData()">Publish to Firebase</button>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 
 <script>
-    // Yahan apni Firebase Config daalein (Jo aapke purane code mein thi)
+    // 1. YAHAN APNI FIREBASE CONFIG DAALEIN (Jo aapke purane code mein thi)
     const firebaseConfig = {
         apiKey: "YOUR_API_KEY",
-        authDomain: "YOUR_PROJECT.firebaseapp.com",
+        authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
         projectId: "YOUR_PROJECT_ID",
-        storageBucket: "YOUR_PROJECT.appspot.com",
-        messagingSenderId: "YOUR_ID",
+        storageBucket: "YOUR_PROJECT_ID.appspot.com",
+        messagingSenderId: "YOUR_SENDER_ID",
         appId: "YOUR_APP_ID"
     };
 
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
+    // 2. Firebase Initialize
+    if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+    }
     const db = firebase.firestore();
 
-    function uploadProduct() {
-        // Form se data nikalna
-        const name = document.getElementById('p_name').value;
-        const price = document.getElementById('p_price').value;
-        const url = document.getElementById('p_url').value;
-        const category = document.getElementById('p_category').value;
+    // 3. Publish Function
+    function publishData() {
+        const pName = document.getElementById('name').value;
+        const pPrice = document.getElementById('price').value;
+        const pUrl = document.getElementById('url').value;
+        const pCategory = document.getElementById('category').value;
 
-        // Validation check
-        if(!name || !price || !url) {
-            alert("Please fill all fields!");
+        if(!pName || !pPrice || !pUrl) {
+            alert("Saari fields bharna zaroori hai!");
             return;
         }
 
-        // Firebase Firestore mein save karna
         db.collection("products").add({
-            name: name,
-            price: price,
-            url: url,
-            category: category, // Yeh automatically field bana dega
-            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            name: pName,
+            price: pPrice,
+            url: pUrl,
+            category: pCategory, // Ye automatic field bana dega
+            date: new Date().toISOString()
         })
         .then(() => {
-            alert("Product successfully added to: " + category);
-            // Form clear karna
-            document.getElementById('p_name').value = "";
-            document.getElementById('p_price').value = "";
-            document.getElementById('p_url').value = "";
+            alert("Data successfully publish ho gaya!");
+            // Input clear karein
+            document.getElementById('name').value = "";
+            document.getElementById('price').value = "";
+            document.getElementById('url').value = "";
         })
         .catch((error) => {
             console.error("Error: ", error);
-            alert("Something went wrong!");
+            alert("Publish nahi ho raha. Console check karein.");
         });
     }
 </script>
