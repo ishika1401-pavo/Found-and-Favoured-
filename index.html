@@ -228,8 +228,24 @@ window.openCat = function(categoryName) {
     // Jab tak data load ho raha hai
     grid.innerHTML = '<p style="grid-column: 1 / -1; text-align:center; padding:20px; color:var(--maroon);">Loading ' + categoryName + '...</p>';
 
-    // Firebase Query: Sirf wahi products lao jo is category ke hain
-  const q = query(collection(db, "products"));
+    // Firebase Query: Sirf wahi products lao jo is category ke hain;
+    
+let q;
+
+// LOGIC 1: Agar 'Pin Products' click hua toh sab kuch dikhao
+if (categoryName === "Pin Products") {
+    q = query(collection(db, "products"));
+} 
+// LOGIC 2: Agar Search ho raha hai toh bhi sab lao (filter niche card mein hoga)
+else if (categoryName.startsWith("Search: ")) {
+    q = query(collection(db, "products"));
+} 
+// LOGIC 3: Baaki buttons (Trending, Electronics etc.) ke liye specific filter
+else {
+    q = query(collection(db, "products"), where("category", "==", categoryName));
+}
+// --- Yahan tak Paste Karein ---
+    
         
     
     // Real-time Listener
