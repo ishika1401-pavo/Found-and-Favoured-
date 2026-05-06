@@ -232,19 +232,21 @@ window.openCat = function(categoryName) {
     
 let q;
 
-// LOGIC 1: Agar 'Pin Products' click hua toh sab kuch dikhao
+// 1. Agar 'Pin Products' wala button dabaya hai
 if (categoryName === "Pin Products") {
-    q = query(collection(db, "products"));
+    // Ye line database mein 'category' field ke andar "Pin Products" ko search karegi
+    q = query(collection(db, "products"), where("category", "==", "Pin Products"));
 } 
-// LOGIC 2: Agar Search ho raha hai toh bhi sab lao (filter niche card mein hoga)
+// 2. Agar Search bar use ho raha hai
 else if (categoryName.startsWith("Search: ")) {
     q = query(collection(db, "products"));
 } 
-// LOGIC 3: Baaki buttons (Trending, Electronics etc.) ke liye specific filter
+// 3. Baaki sab Buttons (Trending, Professional, Combo Outfits) ke liye
 else {
+    // Isse wahi products aayenge jinki category button ke naam se match karegi
     q = query(collection(db, "products"), where("category", "==", categoryName));
 }
-// --- Yahan tak Paste Karein ---
+    
     
         
     
