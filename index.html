@@ -274,15 +274,15 @@ if (categoryName.startsWith("Search: ")) {
             
             // Aapke design ke mutabiq responsive card
             grid.innerHTML += `
-                <div style="background:white; padding:12px; border-radius:15px; border:1.5px solid var(--border-pink); box-shadow: 0 4px 10px rgba(0,0,0,0.05); display:flex; flex-direction:column; align-items:center;">
-                    <img src="${item.img}" style="width:100%; height:140px; object-fit:contain; border-radius:10px; margin-bottom:10px;">
-                    <h4 style="margin:10px 0 5px 0; font-size:14px; color:var(--maroon); text-align:center;">${item.name}</h4>
-                    <button onclick="window.open('${item.url}', '_blank')" style="width:100%; background: var(--border-pink); color: white; border: none; padding: 8px; border-radius: 8px; cursor: pointer;">
-  Buy Now
-</button>
 
-                    </button>
-                </div>`;
+        grid.innerHTML += `
+            <div style="background:white; padding:12px; border-radius:15px; border:1.5px solid var(--border-pink); box-shadow: 0 4px 10px rgba(0,0,0,0.03); display: flex; flex-direction: column; align-items: center;">
+                <img src="${item.img}" style="width:100%; height:140px; object-fit:contain; border-radius:10px; margin-bottom:10px;">
+                <h4 style="margin:0 0 5px 0; font-size:14px; color:var(--maroon); text-align:center;">${item.name}</h4>
+                <p style="margin:0 0 10px 0; font-weight:bold; color:var(--maroon);">₹${item.price}</p>
+                <button onclick="window.open('${item.url}', '_blank')" style="width:100%; background: var(--border-pink); color: maroon; border: none; padding: 10px; border-radius: 10px; font-weight: bold; cursor: pointer;">BUY NOW</button>
+            </div>`;
+                         
         });
     });
 };
