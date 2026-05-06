@@ -216,78 +216,70 @@ import { collection, query, where, onSnapshot } from "https://www.gstatic.com/fi
 
 // 2. Naya Real-time openCat function jo database se connect hai
 window.openCat = function(categoryName) {
-    
-    // List screen par switch karega
-    goTo('list'); 
-    
-    // Title update karega
+    // Screen switch aur title update
+    goTo('list');
     document.getElementById('list-title').innerText = categoryName;
-    
+
     const grid = document.getElementById('items-grid');
+    grid.innerHTML = '<p style="grid-column: 1 / -1; text-align:center; padding:20px; color:var(--maroon);">Loading products...</p>';
 
-    // Jab tak data load ho raha hai
-    grid.innerHTML = '<p style="grid-column: 1 / -1; text-align:center; padding:20px; color:var(--maroon);">Loading ' + categoryName + '...</p>';
+    let q;
+    const productsRef = collection(db, "products");
 
-    // Firebase Query: Sirf wahi products lao jo is category ke hain;
-    
-let q;
+    // AAPKE DATA KE MUTABIQ LOGIC:
+    // 1. Agar 'Pin Products' click ho, toh hum use 'pin products' (small) se match karenge
+    if (categoryName === "Pin Products") {
+        q = query(productsRef, where("category", "==", "pin products"));
+    } 
+    // 2. Search logic
+    else if (categoryName.startsWith("Search: ")) {
+        q = query(productsRef);
+    } 
+    // 3. Baaki categories (ethnic, western etc.)
+    else {
+        // Hum input ko lowercase kar denge taaki database ke 'small letters' se match ho jaye
+        let dbCat = categoryName.toLowerCase();
+        q = query(productsRef, where("category", "==", dbCat));
+    }
 
-// 1. Agar 'Pin Products' wala button dabaya hai
-if (categoryName === "Pin Products") {
-    // Ye line database mein 'category' field ke andar "Pin Products" ko search karegi
-    q = query(collection(db, "products"), where("category", "==", "Pin Products"));
-} 
-// 2. Agar Search bar use ho raha hai
-else if (categoryName.startsWith("Search: ")) {
-    q = query(collection(db, "products"));
-} 
-// 3. Baaki sab Buttons (Trending, Professional, Combo Outfits) ke liye
-else {
-    // Isse wahi products aayenge jinki category button ke naam se match karegi
-    q = query(collection(db, "products"), where("category", "==", categoryName));
-}
-    
-    
-        
-    
     // Real-time Listener
     onSnapshot(q, (querySnapshot) => {
-        grid.innerHTML = ""; 
-
+        grid.innerHTML = "";
+        
         if (querySnapshot.empty) {
-            grid.innerHTML = '<p style="grid-column: 1 / -1; text-align:center; padding:20px;">Is category mein abhi koi product nahi hai.</p>';
+            grid.innerHTML = '<p style="grid-column: 1 / -1; text-align: center; padding:20px;">Abhi is category mein koi products nahi hain.</p>';
             return;
         }
 
         querySnapshot.forEach((doc) => {
             const item = doc.data();
-            // Smart Search Filter
-if (categoryName.startsWith("Search: ")) {
-    const searchTerm = categoryName.replace("Search: ", "").toLowerCase();
-    const productName = item.name ? item.name.toLowerCase() : "";
-    const productCat = item.category ? item.category.toLowerCase() : "";
-    
-    // Agar search word naam ya category mein nahi hai, toh mat dikhao
-    if (!productName.includes(searchTerm) && !productCat.includes(searchTerm)) {
-        return; 
-    }
-        }
-        
             
-            // Aapke design ke mutabiq responsive card
-            grid.innerHTML += `
+            // Smart Search Filter (sirf tab kaam karega jab search bar use ho)
+            if (categoryName.startsWith("Search: ")) {
+                const searchTerm = categoryName.replace("Search: ", "").toLowerCase();
+                const productName = item.name ? item.name.toLowerCase() : "";
+                const productCat = item.category ? item.category.toLowerCase() : "";
+                if (!productName.includes(searchTerm) && !productCat.includes(searchTerm)) {
+                    return;
+                }
+            }
 
-        grid.innerHTML += `
-            <div style="background:white; padding:12px; border-radius:15px; border:1.5px solid var(--border-pink); box-shadow: 0 4px 10px rgba(0,0,0,0.03); display: flex; flex-direction: column; align-items: center;">
-                <img src="${item.img}" style="width:100%; height:140px; object-fit:contain; border-radius:10px; margin-bottom:10px;">
-                <h4 style="margin:0 0 5px 0; font-size:14px; color:var(--maroon); text-align:center;">${item.name}</h4>
-                <p style="margin:0 0 10px 0; font-weight:bold; color:var(--maroon);">₹${item.price}</p>
-                <button onclick="window.open('${item.url}', '_blank')" style="width:100%; background: var(--border-pink); color: maroon; border: none; padding: 10px; border-radius: 10px; font-weight: bold; cursor: pointer;">BUY NOW</button>
-            </div>`;
-                         
+            // Aapka design card
+            grid.innerHTML += `
+                <div style="background:white; padding:12px; border-radius:15px; border:1.5px solid var(--border-pink); box-shadow: 0 4px 8px rgba(0,0,0,0.03);">
+                    <img src="${item.img}" style="width:100%; height:140px; object-fit:contain; border-radius:10px; margin-bottom:8px;">
+                    <h4 style="margin:0 0 5px 0; font-size:14px; color:var(--maroon); text-align:center;">${item.name}</h4>
+                    <p style="margin:0 0 10px 0; font-weight:bold; color:black; text-align:center;">₹${item.price}</p>
+                    <button onclick="window.open('${item.url}', '_blank')" style="width:100%; background: var(--btn-grad); color:white; border:none; padding:8px; border-radius:50px; cursor:pointer; font-size:12px; font-weight:bold; text-transform:uppercase;">Buy Now</button>
+                </div>
+            `;
         });
+    }, (error) => {
+        console.error("Firebase Error:", error);
+        grid.innerHTML = '<p style="text-align:center; padding:20px;">Database connection error!</p>';
     });
 };
+                                                        
         
   
   // 'db' variable ka use karke ab aap products 'Pin' kar sakti hain
