@@ -259,6 +259,18 @@ else {
 
         querySnapshot.forEach((doc) => {
             const item = doc.data();
+            // Smart Search Filter
+if (categoryName.startsWith("Search: ")) {
+    const searchTerm = categoryName.replace("Search: ", "").toLowerCase();
+    const productName = item.name ? item.name.toLowerCase() : "";
+    const productCat = item.category ? item.category.toLowerCase() : "";
+    
+    // Agar search word naam ya category mein nahi hai, toh mat dikhao
+    if (!productName.includes(searchTerm) && !productCat.includes(searchTerm)) {
+        return; 
+    }
+        }
+        
             
             // Aapke design ke mutabiq responsive card
             grid.innerHTML += `
