@@ -214,71 +214,39 @@
         // 1. Firebase se data fetch karne ke tools mangwana
 import { collection, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-// 100% WORKING: Deep Opening + Category + Search + Pin Products
+// SUPER-LIGHT & FAST CODE (No Lag)
 window.openCat = function(categoryName) {
-    // FEATURE 1: Sabse pehle screen switch (DEEP OPENING)
-    // Ye line database se pehle chalegi taaki website turant khule
-    if (typeof goTo === 'function') {
-        goTo('list');
-    }
-
-    // Title set karo
-    const listTitle = document.getElementById('list-title');
-    if (listTitle) listTitle.innerText = categoryName.toUpperCase();
-
-    const grid = document.getElementById('items-grid');
-    grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:50px;">Searching...</div>';
-
-    // Firebase database connection
-    const productsRef = collection(db, "products");
+    // 1. FAST NAVIGATION: Database se pehle screen badlo
+    goTo('list');
     
-    // FEATURE 2: Real-time update (SnapShot)
-    onSnapshot(query(productsRef), (snapshot) => {
+    document.getElementById('list-title').innerText = categoryName.toUpperCase();
+    const grid = document.getElementById('items-grid');
+    grid.innerHTML = '<center style="padding:50px;">Loading...</center>';
+
+    // 2. SIMPLE FETCHING
+    onSnapshot(collection(db, "products"), (snapshot) => {
         grid.innerHTML = "";
         let found = false;
-        
-        // Match karne ke liye word ko small karein (CASE-INSENSITIVE)
-        const target = categoryName.toLowerCase().trim();
+        let target = categoryName.toLowerCase().trim();
 
         snapshot.forEach((doc) => {
-            const item = doc.data();
-            const pName = (item.name || "").toLowerCase();
-            const pCat = (item.category || "").toLowerCase();
+            let item = doc.data();
+            let pCat = (item.category || "").toLowerCase().trim();
+            let pName = (item.name || "").toLowerCase().trim();
 
-            let isMatch = false;
-
-            // FEATURE 3: PIN PRODUCTS (Ispe click karte hi SAB dikhega)
-            if (target === "pin products") {
-                isMatch = true;
-            } 
-            // FEATURE 4: SEARCH LOGIC (Similar words match honge)
-            else if (target.startsWith("search: ")) {
-                const term = target.replace("search: ", "").trim();
-                if (pName.includes(term) || pCat.includes(term)) isMatch = true;
-            }
-            // FEATURE 5: CATEGORY FILTER (Ethnic, Western, etc.)
-            else {
-                if (pCat === target || pCat.includes(target)) isMatch = true;
-            }
-
-            if (isMatch) {
+            // SIMPLE LOGIC: Agar 'Pin' hai toh sab, warna category match
+            if (target === "pin products" || pCat === target || pCat.includes(target) || (target.startsWith("search:") && pName.includes(target.split(":")[1].trim()))) {
                 found = true;
                 grid.innerHTML += `
-                    <div style="background:white; padding:12px; border-radius:15px; border:1px solid #eee; box-shadow: 0 4px 8px rgba(0,0,0,0.05); display: flex; flex-direction: column; justify-content: space-between;">
-                        <div>
-                            <img src="${item.img}" style="width:100%; height:130px; object-fit:contain; border-radius:10px; margin-bottom:8px;">
-                            <h4 style="margin:0 0 5px 0; font-size:13px; color:#800000; text-align:center; height:32px; overflow:hidden;">${item.name}</h4>
-                            <p style="margin:0 0 10px 0; font-weight:bold; text-align:center;">₹${item.price}</p>
-                        </div>
-                        <button onclick="window.open('${item.url}', '_blank')" style="width:100%; background:linear-gradient(to right, #800000, #b03030); color:white; border:none; padding:10px; border-radius:50px; font-size:10px; font-weight:bold; cursor:pointer;">BUY NOW</button>
+                    <div style="background:white; padding:10px; border-radius:12px; border:1px solid #eee; text-align:center;">
+                        <img src="${item.img}" style="width:100%; height:120px; object-fit:contain;">
+                        <p style="font-size:12px; margin:5px 0; height:30px; overflow:hidden;">${item.name}</p>
+                        <b style="display:block; margin-bottom:8px;">₹${item.price}</b>
+                        <button onclick="window.open('${item.url}', '_blank')" style="width:100%; background:#800000; color:white; border:none; padding:8px; border-radius:20px; font-size:10px;">BUY NOW</button>
                     </div>`;
             }
         });
-
-        // Agar kuch na mile
-        if (!found) {
-            grid.innerHTML = '<p style="grid-column:1/-1; text-align:center; padding:50px;">Abhi koi product nahi mila.</p>';
-        }
+        if (!found) grid.innerHTML = "<center style='padding:50px;'>No Products Found</center>";
     });
 };
         
