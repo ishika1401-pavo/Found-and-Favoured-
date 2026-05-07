@@ -214,16 +214,15 @@
         // 1. Firebase se data fetch karne ke tools mangwana
 import { collection, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-// SUPER-LIGHT & FAST CODE (No Lag)
 window.openCat = function(categoryName) {
-    // 1. FAST NAVIGATION: Database se pehle screen badlo
+    // 1. Navigation (Deep Open)
     goTo('list');
     
     document.getElementById('list-title').innerText = categoryName.toUpperCase();
     const grid = document.getElementById('items-grid');
-    grid.innerHTML = '<center style="padding:50px;">Loading...</center>';
+    grid.innerHTML = '<div style="text-align:center; padding:50px;">Loading...</div>';
 
-    // 2. SIMPLE FETCHING
+    // 2. Simple Real-time Database Call
     onSnapshot(collection(db, "products"), (snapshot) => {
         grid.innerHTML = "";
         let found = false;
@@ -234,19 +233,37 @@ window.openCat = function(categoryName) {
             let pCat = (item.category || "").toLowerCase().trim();
             let pName = (item.name || "").toLowerCase().trim();
 
-            // SIMPLE LOGIC: Agar 'Pin' hai toh sab, warna category match
-            if (target === "pin products" || pCat === target || pCat.includes(target) || (target.startsWith("search:") && pName.includes(target.split(":")[1].trim()))) {
+            let show = false;
+
+            // A. Search System: Agar search bar se word aaya ho
+            if (target.startsWith("search:")) {
+                let term = target.split(":")[1].trim();
+                if (pName.includes(term) || pCat.includes(term)) show = true;
+            }
+            // B. Pin Products: Ispe sab kuch dikhao
+            else if (target === "pin products") {
+                show = true;
+            }
+            // C. Category Wise: Ethnic, Western etc.
+            else {
+                if (pCat === target || pCat.includes(target)) show = true;
+            }
+
+            if (show) {
                 found = true;
                 grid.innerHTML += `
-                    <div style="background:white; padding:10px; border-radius:12px; border:1px solid #eee; text-align:center;">
-                        <img src="${item.img}" style="width:100%; height:120px; object-fit:contain;">
-                        <p style="font-size:12px; margin:5px 0; height:30px; overflow:hidden;">${item.name}</p>
-                        <b style="display:block; margin-bottom:8px;">₹${item.price}</b>
-                        <button onclick="window.open('${item.url}', '_blank')" style="width:100%; background:#800000; color:white; border:none; padding:8px; border-radius:20px; font-size:10px;">BUY NOW</button>
+                    <div style="background:white; padding:12px; border-radius:15px; border:1px solid #eee; text-align:center; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
+                        <img src="${item.img}" style="width:100%; height:130px; object-fit:contain; border-radius:10px;">
+                        <h4 style="margin:8px 0; font-size:13px; color:#800000; height:32px; overflow:hidden;">${item.name}</h4>
+                        <p style="margin:0 0 10px 0; font-weight:bold;">₹${item.price}</p>
+                        <button onclick="window.open('${item.url}', '_blank')" style="width:100%; background:linear-gradient(to right, #800000, #b03030); color:white; border:none; padding:10px; border-radius:50px; font-size:10px; font-weight:bold; cursor:pointer;">BUY NOW</button>
                     </div>`;
             }
         });
-        if (!found) grid.innerHTML = "<center style='padding:50px;'>No Products Found</center>";
+
+        if (!found) {
+            grid.innerHTML = '<p style="text-align:center; padding:50px;">No items found.</p>';
+        }
     });
 };
         
