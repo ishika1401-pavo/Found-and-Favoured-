@@ -214,58 +214,60 @@
         // 1. Firebase se data fetch karne ke tools mangwana
 import { collection, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-// 2. UNIVERSAL SMART FUNCTION (No more Capital/Small errors)
+// 2. FINAL FAIL-SAFE FUNCTION (Deep Open + Smart Matching)
 window.openCat = function(categoryName) {
-    console.log("Deep Loading:", categoryName);
-    
+    // Sabse pehle screen switch karega - isse button "Deeply" khulega
     goTo('list');
+    
+    // Title update (e.g., ETHNIC, PIN PRODUCTS)
     document.getElementById('list-title').innerText = categoryName.toUpperCase();
+    
     const grid = document.getElementById('items-grid');
     grid.innerHTML = '<div style="grid-column: 1/-1; text-align:center; padding:50px;"><p>Loading products...</p></div>';
 
     const productsRef = collection(db, "products");
-    const q = query(productsRef); // Fetch all to handle smart filtering
+    
+    // Sab fetch karke frontend par smart filter lagayenge taaki Capital/Small ki galti na ho
+    const q = query(productsRef);
 
     onSnapshot(q, (querySnapshot) => {
         grid.innerHTML = "";
         let foundAny = false;
 
+        // Button se aayi value ko small karein
+        const target = categoryName.toLowerCase().trim();
+
         querySnapshot.forEach((doc) => {
             const item = doc.data();
-            
-            // Sab kuch lowercase mein convert karke match karenge
-            const clickedValue = categoryName.toLowerCase().trim();
-            const dbCategory = (item.category || "").toLowerCase().trim();
+            // Firebase se aayi values ko bhi comparison ke liye small karein
+            const dbCat = (item.category || "").toLowerCase().trim();
             const dbName = (item.name || "").toLowerCase().trim();
             
-            let matchFound = false;
+            let isMatch = false;
 
-            // CONDITION 1: Pin Products par click kiya toh sab dikhao
-            if (clickedValue === "pin products") {
-                matchFound = true; 
+            // LOGIC A: Pin Products button click par saare products dikhao
+            if (target === "pin products") {
+                isMatch = true; 
             }
-            // CONDITION 2: Search Bar logic (similar word matching)
-            else if (clickedValue.startsWith("search: ")) {
-                const term = clickedValue.replace("search: ", "").trim();
-                if (dbName.includes(term) || dbCategory.includes(term)) {
-                    matchFound = true;
-                }
+            // LOGIC B: Search bar (similar word matching)
+            else if (target.startsWith("search: ")) {
+                const term = target.replace("search: ", "").trim();
+                // Agar name ya category mein wo word hai toh match ho gaya
+                if (dbName.includes(term) || dbCat.includes(term)) isMatch = true;
             }
-            // CONDITION 3: Specific Category Buttons (Ethnic, Mobiles, etc.)
+            // LOGIC C: Specific Category Buttons (Ethnic, Western, etc.)
             else {
-                // Agar button name aur database category match ho
-                if (dbCategory === clickedValue || dbCategory.includes(clickedValue)) {
-                    matchFound = true;
-                }
+                // Exact match ya keyword match dono handle honge
+                if (dbCat === target || dbCat.includes(target)) isMatch = true;
             }
 
-            if (matchFound) {
+            if (isMatch) {
                 foundAny = true;
                 grid.innerHTML += `
-                    <div style="background:white; padding:12px; border-radius:18px; border:1.5px solid var(--border-pink); box-shadow: 0 8px 15px rgba(0,0,0,0.04); display:flex; flex-direction:column; justify-content:space-between;">
+                    <div style="background:white; padding:12px; border-radius:18px; border:1.5px solid var(--border-pink); box-shadow: 0 8px 15px rgba(0,0,0,0.04); display: flex; flex-direction: column; justify-content: space-between;">
                         <div>
                             <img src="${item.img}" style="width:100%; height:150px; object-fit:contain; border-radius:12px; margin-bottom:10px;">
-                            <h4 style="margin:0 0 5px 0; font-size:14px; color:var(--maroon); text-align:center; height:38px; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;">${item.name}</h4>
+                            <h4 style="margin:0 0 5px 0; font-size:14px; color:var(--maroon); text-align:center; height:38px; overflow:hidden;">${item.name}</h4>
                             <p style="margin:0 0 12px 0; font-weight:900; color:black; text-align:center; font-size:16px;">₹${item.price}</p>
                         </div>
                         <button onclick="window.open('${item.url}', '_blank')" style="width:100%; background: var(--btn-grad); color:white; border:none; padding:12px; border-radius:50px; cursor:pointer; font-size:11px; font-weight:bold;">BUY ON AMAZON</button>
@@ -275,8 +277,11 @@ window.openCat = function(categoryName) {
         });
 
         if (!foundAny) {
-            grid.innerHTML = '<p style="grid-column:1/-1; text-align:center; padding:50px;">Abhi yahan koi products nahi hain!</p>';
+            grid.innerHTML = `<div style="grid-column: 1/-1; text-align:center; padding:40px;"><p>No items found for "${categoryName}".</p></div>`;
         }
+    }, (error) => {
+        console.error("Firebase Error:", error);
+        grid.innerHTML = "<p>Data connection error. Please refresh.</p>";
     });
 };
         
