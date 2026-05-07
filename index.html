@@ -2,9 +2,12 @@
 <html lang="hi">
 <head>
     <meta charset="UTF-8">
+    <meta name="google-site-verification" content="yJJIPD90vrGxNqN1PpECOZVnvgNJCmVQezcW9tDMANQ" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Found and Favoured</title>
     
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#5a3036">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <style>
@@ -17,86 +20,109 @@
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
         
-        body { background-color: var(--bg-pink); color: var(--maroon); overflow-x: hidden; scroll-behavior: smooth; }
+        body { 
+            background-color: var(--bg-pink); 
+            color: var(--maroon); 
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
 
-        /* SPLASH SCREEN */
+        /* --- 1. SPLASH SCREEN (Grey areas fixed with white background) --- */
         #splash-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
-            background: #ffffff; display: flex; justify-content: center; align-items: center;
+            background: #ffffff; /* Pure White background */
+            display: flex; justify-content: center; align-items: center;
             z-index: 9999; transition: opacity 0.8s ease;
         }
-        #splash-screen img { width: 100%; max-width: 300px; object-fit: contain; }
+        #splash-screen img { 
+            width: 100%; 
+            height: 100%; 
+            max-width: 400px; 
+            object-fit: contain; /* Isse image kategi nahi aur poori dikhegi */
+        }
         .fade-out { opacity: 0; pointer-events: none; }
 
-        /* HEADER */
+        /* --- 2. HEADER --- */
         header {
-            background-color: #ffffff; padding: 10px; text-align: center;
+            background-color: #ffffff; /* Logo area pure white for seamless look */
+            padding: 10px;
+            text-align: center;
             position: sticky; top: 0; z-index: 1000;
             border-bottom: 1.5px solid var(--border-pink); 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.03); 
         }
-        .main-logo { height: 80px; cursor: pointer; }
+        .main-logo {
+            height: 100px; /* Slightly increased for better visibility */
+            width: auto;
+            object-fit: contain;
+            display: block;
+            margin: 0 auto;
+            cursor: pointer;
+        }
 
-        /* SEARCH BAR */
+        /* --- 3. SEARCH BAR --- */
         .search-wrap { padding: 15px 20px; display: flex; justify-content: center; }
         .search-inner {
             background: white; width: 100%; max-width: 500px;
             display: flex; align-items: center; padding: 12px 20px;
             border-radius: 30px; border: 1.5px solid var(--border-pink);
         }
-        .search-inner input { border: none; outline: none; width: 100%; margin-left: 10px; color: var(--maroon); }
+        .search-inner input { border: none; outline: none; width: 100%; font-size: 16px; margin-left: 10px; color: var(--maroon); }
 
-        /* KEYS */
-        .keys-container { display: flex; flex-direction: column; gap: 12px; padding: 10px 20px; max-width: 450px; margin: 0 auto; }
-        .key-item {
-            background: var(--btn-grad); border: 1.5px solid var(--border-pink);
-            padding: 18px; border-radius: 50px; text-align: center; font-weight: bold;
-            cursor: pointer; transition: 0.2s; color: var(--maroon);
+        /* --- 4. FUNCTIONAL KEYS --- */
+        .keys-container {
+            display: flex; flex-direction: column; gap: 12px;
+            padding: 10px 20px; max-width: 450px; margin: 0 auto;
         }
-        .key-item:active { transform: scale(0.96); }
+        .key-item {
+            background: var(--btn-grad);
+            border: 1.5px solid var(--border-pink);
+            padding: 18px; border-radius: 50px;
+            text-align: center; font-weight: bold;
+            cursor: pointer; transition: 0.2s;
+            text-transform: uppercase;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.04);
+            color: var(--maroon);
+        }
+        .key-item:active { transform: scale(0.96); opacity: 0.8; }
 
-        /* CATEGORIES */
+        /* --- 5. CATEGORIES SECTION --- */
         .cat-box {
             background: white; margin: 25px auto; width: 92%; max-width: 550px;
             border-radius: 20px; border: 1px solid var(--border-pink); overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
         }
         .cat-title { background: var(--btn-grad); padding: 15px; font-weight: bold; text-align: center; border-bottom: 1px solid var(--border-pink); }
         .cat-grid { display: grid; grid-template-columns: 1fr 1fr; padding: 20px; gap: 20px; }
-        .cat-link { display: flex; justify-content: space-between; font-size: 13px; padding: 10px 0; cursor: pointer; border-bottom: 1px solid #fdf2f2; }
+        .cat-col h4 { font-size: 14px; margin-bottom: 10px; border-bottom: 2px solid var(--bg-pink); padding-bottom: 5px; }
+        .cat-link { display: flex; justify-content: space-between; font-size: 13px; padding: 10px 0; cursor: pointer; border-bottom: 0.5px solid #f9f9f9; }
 
-        /* PRODUCT CARDS */
-        .product-card {
-            background: white; padding: 12px; border-radius: 15px; 
-            border: 1.5px solid var(--border-pink); transition: 0.3s;
-            display: flex; flex-direction: column; align-items: center;
-        }
-        .buy-btn {
-            width: 100%; background: var(--maroon); color: white; border: none; 
-            padding: 10px; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: auto;
-        }
-
-        /* NAVIGATION */
+        /* --- 6. FLOATING NAV --- */
         .side-nav { position: fixed; bottom: 25px; right: 20px; display: flex; flex-direction: column; gap: 15px; z-index: 998; }
         .nav-btn {
-            background: white; width: 60px; height: 60px; border-radius: 50%;
+            background: white; width: 65px; height: 65px; border-radius: 50%;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            font-size: 10px; font-weight: bold; border: 1.5px solid var(--border-pink); box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            font-size: 10px; font-weight: bold; box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+            cursor: pointer; border: 1.5px solid var(--border-pink);
         }
+        .nav-btn i { font-size: 20px; margin-bottom: 4px; }
 
+        /* --- 7. VIEWS --- */
         .view { display: none; padding: 20px; animation: fadeIn 0.4s ease; }
         .active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        footer { text-align: center; padding: 40px; font-size: 12px; color: #999; }
+        footer { text-align: center; padding: 40px; font-size: 12px; color: #999; background: white; margin-top: 40px; }
     </style>
 </head>
 <body>
 
     <div id="splash-screen">
-        <img src="1777734408931.png" alt="Logo">
+        <img src="1777734408931.png" alt="Splash Logo">
     </div>
 
     <header>
-        <img src="1777734408931.png" class="main-logo" onclick="goTo('home')">
+        <img src="1777734408931.png" class="main-logo" alt="Main Logo" onclick="goTo('home')">
     </header>
 
     <div id="home-view" class="view active">
@@ -108,7 +134,7 @@
         </div>
 
         <div class="keys-container">
-            <div class="key-item" onclick="openCat('Pin Products')">All Products</div>
+            <div class="key-item" onclick="openCat('Pin Products')">Pin Products</div>
             <div class="key-item" onclick="openCat('Trending')">Trending</div>
             <div class="key-item" onclick="openCat('Professional')">Professional</div>
             <div class="key-item" onclick="openCat('Combo Outfits')">Combo Outfits</div>
@@ -119,110 +145,140 @@
             <div class="cat-grid">
                 <div class="cat-col">
                     <h4>FASHION</h4>
-                    <div class="cat-link" onclick="openCat('Ethnic')">Ethnic</div>
-                    <div class="cat-link" onclick="openCat('Western')">Western</div>
+                    <div class="cat-link" onclick="openCat('Ethnic')">Ethnic <span>6</span></div>
+                    <div class="cat-link" onclick="openCat('Western')">Western <span>3</span></div>
                 </div>
                 <div class="cat-col">
-                    <h4>TECH</h4>
-                    <div class="cat-link" onclick="openCat('Mobiles')">Mobiles</div>
-                    <div class="cat-link" onclick="openCat('Accessories')">Accessories</div>
+                    <h4>ELECTRONICS</h4>
+                    <div class="cat-link" onclick="openCat('Mobiles')">Mobiles <span>9</span></div>
+                    <div class="cat-link" onclick="openCat('Accessories')">Accessories <span>3</span></div>
                 </div>
             </div>
         </div>
     </div>
 
     <div id="list-view" class="view">
-        <div onclick="goTo('home')" style="cursor:pointer; font-weight:bold; margin-bottom:20px;">
-            <i class="fa fa-arrow-left"></i> BACK
+        <div onclick="goTo('home')" style="cursor:pointer; font-weight:bold; margin-bottom:20px; color: var(--maroon);">
+            <i class="fa fa-arrow-left"></i> BACK TO HOME
         </div>
         <h2 id="list-title">Category</h2>
-        <div id="items-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-top:20px;"></div>
-    </div>
-
-    <div id="cart-view" class="view">
-        <h2>Your Cart</h2>
-        <p style="text-align:center; margin-top:50px;">Your cart is empty.</p>
-        <button onclick="goTo('home')" class="buy-btn" style="margin-top:20px;">Continue Shopping</button>
+        <div id="items-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-top:20px;">
+        </div>
     </div>
 
     <div class="side-nav">
         <div class="nav-btn" onclick="goTo('cart')"><i class="fa fa-shopping-cart"></i>CART</div>
+        <div class="nav-btn" onclick="openCat('Offers')"><i class="fa fa-tag"></i>OFFERS</div>
     </div>
 
     <footer>&copy; 2026 Found and Favoured | Radhe Radhe</footer>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyDc1CiySPp952UivCtx",
-            authDomain: "ceo-pannel.firebaseapp.com",
-            projectId: "ceo-pannel",
-            storageBucket: "ceo-pannel.firebasestorage.app",
-            messagingSenderId: "178993048874",
-            appId: "1:178993048874:web:6176d4"
+    <script>
+        window.onload = () => { 
+            setTimeout(() => { 
+                document.getElementById('splash-screen').classList.add('fade-out'); 
+            }, 2500); 
         };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-
-        // Global functions ko window par set karna zaroori hai
-        window.goTo = function(id) {
+        
+        function goTo(id) {
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            document.getElementById(id + '-view').classList.add('active');
+            let target = document.getElementById(id + '-view');
+            if(target) target.classList.add('active');
             window.scrollTo(0,0);
-        };
+        }
 
-        window.doSearch = function(v) {
-            if(v.length > 2) window.openCat("Search: " + v);
-        };
-
-        window.openCat = function(categoryName) {
-            window.goTo('list');
-            document.getElementById('list-title').innerText = categoryName;
-            const grid = document.getElementById('items-grid');
-            grid.innerHTML = '<p style="grid-column: 1/-1; text-align:center;">Loading...</p>';
-
-            let q;
-            // Logic: Agar Pin Products hai to saare products dikhao
-            if (categoryName === "Pin Products" || categoryName.startsWith("Search: ")) {
-                q = query(collection(db, "products"));
-            } else {
-                q = query(collection(db, "products"), where("category", "==", categoryName));
-            }
-
-            onSnapshot(q, (snapshot) => {
-                grid.innerHTML = "";
-                let hasData = false;
-
-                snapshot.forEach((doc) => {
-                    const item = doc.data();
-                    
-                    // Search Filter
-                    if (categoryName.startsWith("Search: ")) {
-                        const s = categoryName.replace("Search: ", "").toLowerCase();
-                        if (!item.name.toLowerCase().includes(s)) return;
-                    }
-
-                    hasData = true;
-                    grid.innerHTML += `
-                        <div class="product-card">
-                            <img src="${item.img}" style="width:100%; height:120px; object-fit:contain; margin-bottom:10px;">
-                            <h4 style="font-size:13px; margin-bottom:10px; text-align:center; height:35px; overflow:hidden;">${item.name}</h4>
-                            <button class="buy-btn" onclick="window.open('${item.url}', '_blank')">Buy Now</button>
-                        </div>`;
-                });
-
-                if (!hasData) grid.innerHTML = '<p style="grid-column: 1/-1; text-align:center;">No products found.</p>';
-            });
-        };
-
-        // Splash screen timeout
-        setTimeout(() => {
-            document.getElementById('splash-screen').classList.add('fade-out');
-        }, 2000);
+                function doSearch(v) { if(v.length > 2) openCat("Search: " + v); }
     </script>
+    <script type="module">
+  // Firebase SDKs ko import karna
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getFirestore } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+  // Aapki specific Firebase config details
+  const firebaseConfig = {
+    apiKey: "AIzaSyDc1CiySPp952UivCtx",
+    authDomain: "ceo-pannel.firebaseapp.com",
+    projectId: "ceo-pannel",
+    storageBucket: "ceo-pannel.firebasestorage.app",
+    messagingSenderId: "178993048874",
+    appId: "1:178993048874:web:6176d4"
+  };
+
+  // Firebase ko initialize karein
+  const app = initializeApp(firebaseConfig);
+  
+  // Firestore Database ka connection setup karein
+  const db = getFirestore(app);
+
+  console.log("Success: Website is now connected to CEO Pannel Database!");
+        // 1. Firebase se data fetch karne ke tools mangwana
+import { collection, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+// 2. Naya Real-time openCat function jo database se connect hai
+window.openCat = function(categoryName) {
+    
+    // List screen par switch karega
+    goTo('list'); 
+    
+    // Title update karega
+    document.getElementById('list-title').innerText = categoryName;
+    
+    const grid = document.getElementById('items-grid');
+
+    // Jab tak data load ho raha hai
+    grid.innerHTML = '<p style="grid-column: 1 / -1; text-align:center; padding:20px; color:var(--maroon);">Loading ' + categoryName + '...</p>';
+
+    // Firebase Query: Sirf wahi products lao jo is category ke hain;
+    
+let q;
+
+// LOGIC 1: Agar 'Pin Products' click hua toh sab kuch dikhao
+if (categoryName === "Pin Products") {
+    q = query(collection(db, "products"));
+} 
+// LOGIC 2: Agar Search ho raha hai toh bhi sab lao (filter niche card mein hoga)
+else if (categoryName.startsWith("Search: ")) {
+    q = query(collection(db, "products"));
+} 
+// LOGIC 3: Baaki buttons (Trending, Electronics etc.) ke liye specific filter
+else {
+    q = query(collection(db, "products"), where("category", "==", categoryName));
+}
+// --- Yahan tak Paste Karein ---
+    
+        
+    
+    // Real-time Listener
+    onSnapshot(q, (querySnapshot) => {
+        grid.innerHTML = ""; 
+
+        if (querySnapshot.empty) {
+            grid.innerHTML = '<p style="grid-column: 1 / -1; text-align:center; padding:20px;">Is category mein abhi koi product nahi hai.</p>';
+            return;
+        }
+
+        querySnapshot.forEach((doc) => {
+            const item = doc.data();
+            
+            // Aapke design ke mutabiq responsive card
+            grid.innerHTML += `
+                <div style="background:white; padding:12px; border-radius:15px; border:1.5px solid var(--border-pink); box-shadow: 0 4px 10px rgba(0,0,0,0.05); display:flex; flex-direction:column; align-items:center;">
+                    <img src="${item.img}" style="width:100%; height:140px; object-fit:contain; border-radius:10px; margin-bottom:10px;">
+                    <h4 style="margin:10px 0 5px 0; font-size:14px; color:var(--maroon); text-align:center;">${item.name}</h4>
+                    <button onclick="window.open('${item.url}', '_blank')" style="width:100%; background: var(--border-pink); color: white; border: none; padding: 8px; border-radius: 8px; cursor: pointer;">
+  Buy Now
+</button>
+
+                    </button>
+                </div>`;
+        });
+    });
+};
+        
+  
+  // 'db' variable ka use karke ab aap products 'Pin' kar sakti hain
+    </script>
+    
 </body>
-    </html>
+            </html>
             
