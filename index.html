@@ -214,77 +214,68 @@
         // 1. Firebase se data fetch karne ke tools mangwana
 import { collection, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-// 2. Naya Real-time openCat function jo database se connect hai
+// 2. Universal openCat function (For Buttons & Search)
 window.openCat = function(categoryName) {
-    // Screen switch aur title update
+    console.log("Loading for:", categoryName);
+    
     goTo('list');
     document.getElementById('list-title').innerText = categoryName;
-
     const grid = document.getElementById('items-grid');
-    grid.innerHTML = '<p style="grid-column: 1 / -1; text-align:center; padding:20px; color:var(--maroon);">Loading products...</p>';
+    grid.innerHTML = '<p style="grid-column: 1/-1; text-align:center; padding:40px; color:var(--maroon);">Searching products...</p>';
 
     let q;
     const productsRef = collection(db, "products");
 
-    // AAPKE DATA KE MUTABIQ LOGIC:
-    // 1. Agar 'Pin Products' click ho, toh hum use 'pin products' (small) se match karenge
+    // LOGIC 1: Pin Products = Saare products (No Filter)
     if (categoryName === "Pin Products") {
-        q = query(productsRef, where("category", "==", "pin products"));
+        q = query(productsRef); 
     } 
-    // 2. Search logic
+    // LOGIC 2: Search Bar Logic (Saare products fetch honge, filter niche loop mein hoga)
     else if (categoryName.startsWith("Search: ")) {
         q = query(productsRef);
     } 
-    // 3. Baaki categories (ethnic, western etc.)
+    // LOGIC 3: Specific Buttons (Ethnic, Western, etc.)
     else {
-        // Hum input ko lowercase kar denge taaki database ke 'small letters' se match ho jaye
         let dbCat = categoryName.toLowerCase();
         q = query(productsRef, where("category", "==", dbCat));
     }
 
-    // Real-time Listener
     onSnapshot(q, (querySnapshot) => {
         grid.innerHTML = "";
-        
-        if (querySnapshot.empty) {
-            grid.innerHTML = '<p style="grid-column: 1 / -1; text-align: center; padding:20px;">Abhi is category mein koi products nahi hain.</p>';
-            return;
-        }
+        let hasResults = false;
 
         querySnapshot.forEach((doc) => {
             const item = doc.data();
             
-            // Smart Search Filter (sirf tab kaam karega jab search bar use ho)
+            // SMART SEARCH FILTER:
+            // Agar search bar use ho raha hai, toh Name aur Category dono check karo
             if (categoryName.startsWith("Search: ")) {
-                const searchTerm = categoryName.replace("Search: ", "").toLowerCase();
-                const productName = item.name ? item.name.toLowerCase() : "";
-                const productCat = item.category ? item.category.toLowerCase() : "";
+                const searchTerm = categoryName.replace("Search: ", "").toLowerCase().trim();
+                const productName = (item.name || "").toLowerCase();
+                const productCat = (item.category || "").toLowerCase();
+
+                // Agar keyword name mein ya category mein mil jaye
                 if (!productName.includes(searchTerm) && !productCat.includes(searchTerm)) {
-                    return;
+                    return; // Skip this product
                 }
             }
 
-            // Aapka design card
+            hasResults = true;
+            // Product Card
             grid.innerHTML += `
-                <div style="background:white; padding:12px; border-radius:15px; border:1.5px solid var(--border-pink); box-shadow: 0 4px 8px rgba(0,0,0,0.03);">
+                <div style="background:white; padding:12px; border-radius:15px; border:1.5px solid var(--border-pink); box-shadow: 0 4px 10px rgba(0,0,0,0.03);">
                     <img src="${item.img}" style="width:100%; height:140px; object-fit:contain; border-radius:10px; margin-bottom:8px;">
-                    <h4 style="margin:0 0 5px 0; font-size:14px; color:var(--maroon); text-align:center;">${item.name}</h4>
+                    <h4 style="margin:0 0 5px 0; font-size:13px; color:var(--maroon); text-align:center; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;">${item.name}</h4>
                     <p style="margin:0 0 10px 0; font-weight:bold; color:black; text-align:center;">₹${item.price}</p>
-                    <button onclick="window.open('${item.url}', '_blank')" style="width:100%; background: var(--btn-grad); color:white; border:none; padding:8px; border-radius:50px; cursor:pointer; font-size:12px; font-weight:bold; text-transform:uppercase;">Buy Now</button>
+                    <button onclick="window.open('${item.url}', '_blank')" style="width:100%; background: var(--btn-grad); color:white; border:none; padding:10px; border-radius:50px; cursor:pointer; font-size:11px; font-weight:bold;">BUY ON AMAZON</button>
                 </div>
             `;
         });
-    }, (error) => {
-        console.error("Firebase Error:", error);
-        grid.innerHTML = '<p style="text-align:center; padding:20px;">Database connection error!</p>';
+
+        // Agar koi product match nahi hua
+        if (!hasResults) {
+            grid.innerHTML = '<p style="grid-column: 1/-1; text-align:center; padding:40px;">No matching products found.</p>';
+        }
     });
 };
-                                                        
-        
-  
-  // 'db' variable ka use karke ab aap products 'Pin' kar sakti hain
-    </script>
     
-</body>
-    </html>
-
