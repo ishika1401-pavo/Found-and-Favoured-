@@ -214,26 +214,27 @@
         // 1. Firebase se data fetch karne ke tools mangwana
 import { collection, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
+// SMART OPENING: Like Add to Cart Functionality
 window.openCat = function(categoryName) {
-    // 1. TURANT DEEP OPEN (Bina kisi deri ke screen switch)
+    // STEP 1: Turant Action (Add to Cart ki tarah fast)
     if (typeof goTo === 'function') {
         goTo('list');
     }
 
-    // Title aur Loading UI
+    // Title update (Background mein)
     const listTitle = document.getElementById('list-title');
     if (listTitle) listTitle.innerText = categoryName.toUpperCase();
 
     const grid = document.getElementById('items-grid');
-    grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:50px; color:var(--maroon);">Loading...</div>';
+    grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:50px; color:var(--maroon);">Opening...</div>';
 
-    // 2. FIREBASE CONNECTION (Yahan se database connect ho raha hai)
+    // STEP 2: Database Connection (Firebase)
     const productsRef = collection(db, "products");
     
-    // onSnapshot aapke purane products ko wapas visible kar dega
+    // onSnapshot bilkul Add to Cart ki tarah "Live" kaam karega
     onSnapshot(query(productsRef), (snapshot) => {
         grid.innerHTML = "";
-        let found = false;
+        let foundAny = false;
         const target = categoryName.toLowerCase().trim();
 
         snapshot.forEach((doc) => {
@@ -243,22 +244,22 @@ window.openCat = function(categoryName) {
 
             let isMatch = false;
 
-            // FEATURE A: PIN PRODUCTS (Ispe saare purane products dikhenge)
+            // PIN PRODUCTS LOGIC (Purane products wapas show karne ke liye)
             if (target === "pin products") {
                 isMatch = true;
             } 
-            // FEATURE B: CATEGORY FILTER (Ethnic, Grocery etc.)
+            // CATEGORY FILTER LOGIC
             else if (pCat === target || pCat.includes(target)) {
                 isMatch = true;
             }
-            // FEATURE C: SEARCH SYSTEM (Naam se dhoondne ke liye)
+            // SEARCH SYSTEM
             else if (target.startsWith("search: ")) {
                 const term = target.replace("search: ", "").trim();
                 if (pName.includes(term) || pCat.includes(term)) isMatch = true;
             }
 
             if (isMatch) {
-                found = true;
+                foundAny = true;
                 grid.innerHTML += `
                     <div style="background:white; padding:12px; border-radius:15px; border:1px solid #eee; box-shadow: 0 4px 8px rgba(0,0,0,0.05); display: flex; flex-direction: column; justify-content: space-between;">
                         <div>
@@ -271,10 +272,9 @@ window.openCat = function(categoryName) {
             }
         });
 
-        if (!found) {
-            grid.innerHTML = '<p style="grid-column:1/-1; text-align:center; padding:50px;">Abhi koi product nahi mila.</p>';
+        if (!foundAny) {
+            grid.innerHTML = '<p style="grid-column:1/-1; text-align:center; padding:40px;">No items found.</p>';
         }
     });
 };
-             
-    
+        
