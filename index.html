@@ -214,78 +214,66 @@
         // 1. Firebase se data fetch karne ke tools mangwana
 import { collection, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-// FINAL PAKKA VERSION: Deep Open + All Pin Products + Category Filter
+// FINAL PAKKA CODE: Deep Open + Pin Products Fix
 window.openCat = function(categoryName) {
-    // 1. SABSE PEHLE SCREEN CHANGE (Deep Opening Fix)
-    // Ye line database se pehle chalegi, isliye button turant response dega
-    goTo('list');
-    
-    document.getElementById('list-title').innerText = categoryName.toUpperCase();
+    // 1. Sabse pehle screen switch (Deep Opening)
+    if (typeof goTo === 'function') {
+        goTo('list');
+    }
+
+    // 2. Title aur Loading Setup
+    const listTitle = document.getElementById('list-title');
+    if (listTitle) listTitle.innerText = categoryName.toUpperCase();
+
     const grid = document.getElementById('items-grid');
-    grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:50px; color:var(--maroon);">Loading products...</div>';
+    grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:50px;">Searching Products...</div>';
 
-    // 2. FIREBASE CONNECTION
+    // 3. Database Fetching
     const productsRef = collection(db, "products");
-    const q = query(productsRef); // Sab fetch karke frontend filter logic lagayenge
-
-    onSnapshot(q, (querySnapshot) => {
+    
+    onSnapshot(query(productsRef), (snapshot) => {
         grid.innerHTML = "";
-        let foundAny = false;
-        
-        // Button se aaya naam (Target)
+        let found = false;
         const target = categoryName.toLowerCase().trim();
 
-        querySnapshot.forEach((doc) => {
+        snapshot.forEach((doc) => {
             const item = doc.data();
-            // Database se aayi values
-            const dbCat = (item.category || "").toLowerCase().trim();
-            const dbName = (item.name || "").toLowerCase().trim();
+            const pName = (item.name || "").toLowerCase();
+            const pCat = (item.category || "").toLowerCase();
 
             let isMatch = false;
 
-            // LOGIC A: Agar 'Pin Products' click hua, toh SAB dikhao (Purane products yahan dikhenge)
+            // Pin Products logic: Saare products dikhayega (Lakme Sunscreen etc.)
             if (target === "pin products") {
-                isMatch = true; 
+                isMatch = true;
+            } 
+            // Category logic: Ethnic, Western etc.
+            else if (pCat === target || pCat.includes(target)) {
+                isMatch = true;
             }
-            // LOGIC B: Search bar (Similar word matching - example: 'Lak' for 'Lakme')
+            // Search logic: Agar search bar se call aaya ho
             else if (target.startsWith("search: ")) {
                 const term = target.replace("search: ", "").trim();
-                if (dbName.includes(term) || dbCat.includes(term)) {
-                    isMatch = true;
-                }
-            }
-            // LOGIC C: Category Wise (Ethnic, Western etc.)
-            else {
-                // Agar button aur category match ho (Case Insensitive)
-                if (dbCat === target || dbCat.includes(target)) {
-                    isMatch = true;
-                }
+                if (pName.includes(term) || pCat.includes(term)) isMatch = true;
             }
 
             if (isMatch) {
-                foundAny = true;
+                found = true;
                 grid.innerHTML += `
-                    <div style="background:white; padding:12px; border-radius:18px; border:1.5px solid var(--border-pink); box-shadow: 0 8px 15px rgba(0,0,0,0.04); display: flex; flex-direction: column; justify-content: space-between;">
+                    <div style="background:white; padding:12px; border-radius:15px; border:1px solid #eee; box-shadow: 0 4px 8px rgba(0,0,0,0.05); display: flex; flex-direction: column; justify-content: space-between;">
                         <div>
-                            <img src="${item.img}" style="width:100%; height:150px; object-fit:contain; border-radius:12px; margin-bottom:10px;">
-                            <h4 style="margin:0 0 5px 0; font-size:14px; color:var(--maroon); text-align:center; height:38px; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;">${item.name}</h4>
-                            <p style="margin:0 0 12px 0; font-weight:900; color:black; text-align:center; font-size:16px;">₹${item.price}</p>
+                            <img src="${item.img}" style="width:100%; height:130px; object-fit:contain; border-radius:10px; margin-bottom:8px;">
+                            <h4 style="margin:0 0 5px 0; font-size:13px; color:#800000; text-align:center; height:32px; overflow:hidden;">${item.name}</h4>
+                            <p style="margin:0 0 10px 0; font-weight:bold; text-align:center;">₹${item.price}</p>
                         </div>
-                        <button onclick="window.open('${item.url}', '_blank')" style="width:100%; background: var(--btn-grad); color:white; border:none; padding:12px; border-radius:50px; cursor:pointer; font-size:11px; font-weight:bold;">BUY ON AMAZON</button>
-                    </div>
-                `;
+                        <button onclick="window.open('${item.url}', '_blank')" style="width:100%; background:linear-gradient(to right, #800000, #b03030); color:white; border:none; padding:10px; border-radius:50px; font-size:10px; font-weight:bold; cursor:pointer;">BUY NOW</button>
+                    </div>`;
             }
         });
 
-        // Agar kuch nahi mila
-        if (!foundAny) {
-            grid.innerHTML = `<div style="grid-column: 1/-1; text-align:center; padding:40px;">
-                <p style="color:var(--maroon);">Oops! Is category mein abhi koi product nahi hai.</p>
-            </div>`;
+        if (!found) {
+            grid.innerHTML = '<p style="grid-column:1/-1; text-align:center; padding:50px;">No products found in this category.</p>';
         }
-    }, (error) => {
-        console.error("Firebase Error:", error);
-        grid.innerHTML = "<p style='text-align:center; padding:20px;'>Connection error. Please refresh.</p>";
     });
 };
         
