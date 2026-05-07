@@ -214,24 +214,24 @@
         // 1. Firebase se data fetch karne ke tools mangwana
 import { collection, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
+        // SCREENSHOT SE LIYA GAYA ORIGINAL CODE
 window.openCat = function(categoryName) {
-    // 1. Sabse pehle screen switch (Deep Opening)
+    // 1. Sabse pehle screen switch (Ye button ko on karega)
     if (typeof goTo === 'function') {
         goTo('list');
     }
 
-    // Title update
+    // Title set karo
     const listTitle = document.getElementById('list-title');
     if (listTitle) listTitle.innerText = categoryName.toUpperCase();
 
     const grid = document.getElementById('items-grid');
-    grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:50px;">Loading...</div>';
+    grid.innerHTML = '<div style="grid-column: 1 / -1; text-align:center; padding:50px;">Loading ' + categoryName + '...</div>';
 
     // 2. Firebase Connection (Wahi purana setup)
-    const productsRef = collection(db, "products");
+    const q = query(collection(db, "products"));
     
-    // onSnapshot aapke pinned products aur categories sab real-time load karega
-    onSnapshot(query(productsRef), (snapshot) => {
+    onSnapshot(q, (snapshot) => {
         grid.innerHTML = "";
         let found = false;
         const target = categoryName.toLowerCase().trim();
@@ -243,11 +243,11 @@ window.openCat = function(categoryName) {
 
             let isMatch = false;
 
-            // A. PIN PRODUCTS: Ispe click karte hi saare purane products wapas aayenge
+            // A. PIN PRODUCTS: Sab kuch dikhayega (Lakme Sunscreen etc.)
             if (target === "pin products") {
                 isMatch = true;
             } 
-            // B. CATEGORY FILTER: Jo bhi category button click ho
+            // B. CATEGORY FILTER: Jo screenshot mein tha
             else if (pCat === target || pCat.includes(target)) {
                 isMatch = true;
             }
@@ -260,19 +260,19 @@ window.openCat = function(categoryName) {
             if (isMatch) {
                 found = true;
                 grid.innerHTML += `
-                    <div style="background:white; padding:12px; border-radius:15px; border:1px solid #eee; box-shadow: 0 4px 8px rgba(0,0,0,0.05); display: flex; flex-direction: column; justify-content: space-between;">
+                    <div style="background:white; padding:12px; border-radius:15px; border:1.5px solid var(--border-pink); box-shadow: 0 4px 8px rgba(0,0,0,0.05); display: flex; flex-direction: column; justify-content: space-between;">
                         <div>
-                            <img src="${item.url || item.img}" style="width:100%; height:130px; object-fit:contain; border-radius:10px; margin-bottom:8px;">
-                            <h4 style="margin:0 0 5px 0; font-size:13px; color:#800000; text-align:center; height:32px; overflow:hidden;">${item.name}</h4>
+                            <img src="${item.url}" style="width:100%; height:140px; object-fit:contain; border-radius:10px; margin-bottom:10px;">
+                            <h4 style="margin:10px 0 5px 0; font-size:14px; color:var(--maroon); text-align:center;">${item.name}</h4>
                             <p style="margin:0 0 10px 0; font-weight:bold; text-align:center;">₹${item.price}</p>
                         </div>
-                        <button onclick="window.open('${item.url}', '_blank')" style="width:100%; background:linear-gradient(to right, #800000, #b03030); color:white; border:none; padding:10px; border-radius:50px; font-size:10px; font-weight:bold; cursor:pointer;">BUY NOW</button>
+                        <button onclick="window.open('${item.url}', '_blank')" style="width:100%; background:var(--btn-grad); color:white; border:none; padding:10px; border-radius:50px; font-weight:bold; cursor:pointer;">BUY NOW</button>
                     </div>`;
             }
         });
 
         if (!found) {
-            grid.innerHTML = '<p style="grid-column:1/-1; text-align:center; padding:50px;">No items found.</p>';
+            grid.innerHTML = '<p style="grid-column: 1 / -1; text-align:center; padding:50px;">No products found.</p>';
         }
     });
 };
