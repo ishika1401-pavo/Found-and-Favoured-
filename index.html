@@ -214,68 +214,69 @@
         // 1. Firebase se data fetch karne ke tools mangwana
 import { collection, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-// 2. Universal openCat function (For Buttons & Search)
+// 2. UNIVERSAL SMART FUNCTION (No more Capital/Small errors)
 window.openCat = function(categoryName) {
-    console.log("Loading for:", categoryName);
+    console.log("Deep Loading:", categoryName);
     
     goTo('list');
-    document.getElementById('list-title').innerText = categoryName;
+    document.getElementById('list-title').innerText = categoryName.toUpperCase();
     const grid = document.getElementById('items-grid');
-    grid.innerHTML = '<p style="grid-column: 1/-1; text-align:center; padding:40px; color:var(--maroon);">Searching products...</p>';
+    grid.innerHTML = '<div style="grid-column: 1/-1; text-align:center; padding:50px;"><p>Loading products...</p></div>';
 
-    let q;
     const productsRef = collection(db, "products");
-
-    // LOGIC 1: Pin Products = Saare products (No Filter)
-    if (categoryName === "Pin Products") {
-        q = query(productsRef); 
-    } 
-    // LOGIC 2: Search Bar Logic (Saare products fetch honge, filter niche loop mein hoga)
-    else if (categoryName.startsWith("Search: ")) {
-        q = query(productsRef);
-    } 
-    // LOGIC 3: Specific Buttons (Ethnic, Western, etc.)
-    else {
-        let dbCat = categoryName.toLowerCase();
-        q = query(productsRef, where("category", "==", dbCat));
-    }
+    const q = query(productsRef); // Fetch all to handle smart filtering
 
     onSnapshot(q, (querySnapshot) => {
         grid.innerHTML = "";
-        let hasResults = false;
+        let foundAny = false;
 
         querySnapshot.forEach((doc) => {
             const item = doc.data();
             
-            // SMART SEARCH FILTER:
-            // Agar search bar use ho raha hai, toh Name aur Category dono check karo
-            if (categoryName.startsWith("Search: ")) {
-                const searchTerm = categoryName.replace("Search: ", "").toLowerCase().trim();
-                const productName = (item.name || "").toLowerCase();
-                const productCat = (item.category || "").toLowerCase();
+            // Sab kuch lowercase mein convert karke match karenge
+            const clickedValue = categoryName.toLowerCase().trim();
+            const dbCategory = (item.category || "").toLowerCase().trim();
+            const dbName = (item.name || "").toLowerCase().trim();
+            
+            let matchFound = false;
 
-                // Agar keyword name mein ya category mein mil jaye
-                if (!productName.includes(searchTerm) && !productCat.includes(searchTerm)) {
-                    return; // Skip this product
+            // CONDITION 1: Pin Products par click kiya toh sab dikhao
+            if (clickedValue === "pin products") {
+                matchFound = true; 
+            }
+            // CONDITION 2: Search Bar logic (similar word matching)
+            else if (clickedValue.startsWith("search: ")) {
+                const term = clickedValue.replace("search: ", "").trim();
+                if (dbName.includes(term) || dbCategory.includes(term)) {
+                    matchFound = true;
+                }
+            }
+            // CONDITION 3: Specific Category Buttons (Ethnic, Mobiles, etc.)
+            else {
+                // Agar button name aur database category match ho
+                if (dbCategory === clickedValue || dbCategory.includes(clickedValue)) {
+                    matchFound = true;
                 }
             }
 
-            hasResults = true;
-            // Product Card
-            grid.innerHTML += `
-                <div style="background:white; padding:12px; border-radius:15px; border:1.5px solid var(--border-pink); box-shadow: 0 4px 10px rgba(0,0,0,0.03);">
-                    <img src="${item.img}" style="width:100%; height:140px; object-fit:contain; border-radius:10px; margin-bottom:8px;">
-                    <h4 style="margin:0 0 5px 0; font-size:13px; color:var(--maroon); text-align:center; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;">${item.name}</h4>
-                    <p style="margin:0 0 10px 0; font-weight:bold; color:black; text-align:center;">₹${item.price}</p>
-                    <button onclick="window.open('${item.url}', '_blank')" style="width:100%; background: var(--btn-grad); color:white; border:none; padding:10px; border-radius:50px; cursor:pointer; font-size:11px; font-weight:bold;">BUY ON AMAZON</button>
-                </div>
-            `;
+            if (matchFound) {
+                foundAny = true;
+                grid.innerHTML += `
+                    <div style="background:white; padding:12px; border-radius:18px; border:1.5px solid var(--border-pink); box-shadow: 0 8px 15px rgba(0,0,0,0.04); display:flex; flex-direction:column; justify-content:space-between;">
+                        <div>
+                            <img src="${item.img}" style="width:100%; height:150px; object-fit:contain; border-radius:12px; margin-bottom:10px;">
+                            <h4 style="margin:0 0 5px 0; font-size:14px; color:var(--maroon); text-align:center; height:38px; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;">${item.name}</h4>
+                            <p style="margin:0 0 12px 0; font-weight:900; color:black; text-align:center; font-size:16px;">₹${item.price}</p>
+                        </div>
+                        <button onclick="window.open('${item.url}', '_blank')" style="width:100%; background: var(--btn-grad); color:white; border:none; padding:12px; border-radius:50px; cursor:pointer; font-size:11px; font-weight:bold;">BUY ON AMAZON</button>
+                    </div>
+                `;
+            }
         });
 
-        // Agar koi product match nahi hua
-        if (!hasResults) {
-            grid.innerHTML = '<p style="grid-column: 1/-1; text-align:center; padding:40px;">No matching products found.</p>';
+        if (!foundAny) {
+            grid.innerHTML = '<p style="grid-column:1/-1; text-align:center; padding:50px;">Abhi yahan koi products nahi hain!</p>';
         }
     });
 };
-    
+        
