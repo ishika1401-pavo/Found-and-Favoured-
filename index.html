@@ -214,26 +214,30 @@
         // 1. Firebase se data fetch karne ke tools mangwana
 import { collection, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-// FINAL PAKKA CODE: Deep Open + Pin Products Fix
+// 100% WORKING: Deep Opening + Category + Search + Pin Products
 window.openCat = function(categoryName) {
-    // 1. Sabse pehle screen switch (Deep Opening)
+    // FEATURE 1: Sabse pehle screen switch (DEEP OPENING)
+    // Ye line database se pehle chalegi taaki website turant khule
     if (typeof goTo === 'function') {
         goTo('list');
     }
 
-    // 2. Title aur Loading Setup
+    // Title set karo
     const listTitle = document.getElementById('list-title');
     if (listTitle) listTitle.innerText = categoryName.toUpperCase();
 
     const grid = document.getElementById('items-grid');
-    grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:50px;">Searching Products...</div>';
+    grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:50px;">Searching...</div>';
 
-    // 3. Database Fetching
+    // Firebase database connection
     const productsRef = collection(db, "products");
     
+    // FEATURE 2: Real-time update (SnapShot)
     onSnapshot(query(productsRef), (snapshot) => {
         grid.innerHTML = "";
         let found = false;
+        
+        // Match karne ke liye word ko small karein (CASE-INSENSITIVE)
         const target = categoryName.toLowerCase().trim();
 
         snapshot.forEach((doc) => {
@@ -243,18 +247,18 @@ window.openCat = function(categoryName) {
 
             let isMatch = false;
 
-            // Pin Products logic: Saare products dikhayega (Lakme Sunscreen etc.)
+            // FEATURE 3: PIN PRODUCTS (Ispe click karte hi SAB dikhega)
             if (target === "pin products") {
                 isMatch = true;
             } 
-            // Category logic: Ethnic, Western etc.
-            else if (pCat === target || pCat.includes(target)) {
-                isMatch = true;
-            }
-            // Search logic: Agar search bar se call aaya ho
+            // FEATURE 4: SEARCH LOGIC (Similar words match honge)
             else if (target.startsWith("search: ")) {
                 const term = target.replace("search: ", "").trim();
                 if (pName.includes(term) || pCat.includes(term)) isMatch = true;
+            }
+            // FEATURE 5: CATEGORY FILTER (Ethnic, Western, etc.)
+            else {
+                if (pCat === target || pCat.includes(target)) isMatch = true;
             }
 
             if (isMatch) {
@@ -271,8 +275,9 @@ window.openCat = function(categoryName) {
             }
         });
 
+        // Agar kuch na mile
         if (!found) {
-            grid.innerHTML = '<p style="grid-column:1/-1; text-align:center; padding:50px;">No products found in this category.</p>';
+            grid.innerHTML = '<p style="grid-column:1/-1; text-align:center; padding:50px;">Abhi koi product nahi mila.</p>';
         }
     });
 };
