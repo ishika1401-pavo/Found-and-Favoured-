@@ -214,27 +214,26 @@
         // 1. Firebase se data fetch karne ke tools mangwana
 import { collection, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-// SMART OPENING: Like Add to Cart Functionality
 window.openCat = function(categoryName) {
-    // STEP 1: Turant Action (Add to Cart ki tarah fast)
+    // 1. Sabse pehle screen switch (Deep Opening)
     if (typeof goTo === 'function') {
         goTo('list');
     }
 
-    // Title update (Background mein)
+    // Title update
     const listTitle = document.getElementById('list-title');
     if (listTitle) listTitle.innerText = categoryName.toUpperCase();
 
     const grid = document.getElementById('items-grid');
-    grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:50px; color:var(--maroon);">Opening...</div>';
+    grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:50px;">Loading...</div>';
 
-    // STEP 2: Database Connection (Firebase)
+    // 2. Firebase Connection (Wahi purana setup)
     const productsRef = collection(db, "products");
     
-    // onSnapshot bilkul Add to Cart ki tarah "Live" kaam karega
+    // onSnapshot aapke pinned products aur categories sab real-time load karega
     onSnapshot(query(productsRef), (snapshot) => {
         grid.innerHTML = "";
-        let foundAny = false;
+        let found = false;
         const target = categoryName.toLowerCase().trim();
 
         snapshot.forEach((doc) => {
@@ -244,26 +243,26 @@ window.openCat = function(categoryName) {
 
             let isMatch = false;
 
-            // PIN PRODUCTS LOGIC (Purane products wapas show karne ke liye)
+            // A. PIN PRODUCTS: Ispe click karte hi saare purane products wapas aayenge
             if (target === "pin products") {
                 isMatch = true;
             } 
-            // CATEGORY FILTER LOGIC
+            // B. CATEGORY FILTER: Jo bhi category button click ho
             else if (pCat === target || pCat.includes(target)) {
                 isMatch = true;
             }
-            // SEARCH SYSTEM
+            // C. SEARCH SYSTEM: Naam se dhoondne ke liye
             else if (target.startsWith("search: ")) {
                 const term = target.replace("search: ", "").trim();
                 if (pName.includes(term) || pCat.includes(term)) isMatch = true;
             }
 
             if (isMatch) {
-                foundAny = true;
+                found = true;
                 grid.innerHTML += `
                     <div style="background:white; padding:12px; border-radius:15px; border:1px solid #eee; box-shadow: 0 4px 8px rgba(0,0,0,0.05); display: flex; flex-direction: column; justify-content: space-between;">
                         <div>
-                            <img src="${item.img}" style="width:100%; height:130px; object-fit:contain; border-radius:10px; margin-bottom:8px;">
+                            <img src="${item.url || item.img}" style="width:100%; height:130px; object-fit:contain; border-radius:10px; margin-bottom:8px;">
                             <h4 style="margin:0 0 5px 0; font-size:13px; color:#800000; text-align:center; height:32px; overflow:hidden;">${item.name}</h4>
                             <p style="margin:0 0 10px 0; font-weight:bold; text-align:center;">₹${item.price}</p>
                         </div>
@@ -272,8 +271,8 @@ window.openCat = function(categoryName) {
             }
         });
 
-        if (!foundAny) {
-            grid.innerHTML = '<p style="grid-column:1/-1; text-align:center; padding:40px;">No items found.</p>';
+        if (!found) {
+            grid.innerHTML = '<p style="grid-column:1/-1; text-align:center; padding:50px;">No items found.</p>';
         }
     });
 };
