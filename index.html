@@ -232,19 +232,22 @@ window.openCat = function(categoryName) {
     
 let q;
 
-// LOGIC 1: Agar 'Pin Products' click hua toh sab kuch dikhao
+    // --- Yahan se replace karein (Line 234-247) ---
+let q;
+
 if (categoryName === "Pin Products") {
+    // Sab kuch dikhao (Pinned items include ho jayenge)
+    q = query(collection(db, "products")); 
+} else if (categoryName.startsWith("Search: ")) {
+    // Search ke liye logic
     q = query(collection(db, "products"));
-} 
-// LOGIC 2: Agar Search ho raha hai toh bhi sab lao (filter niche card mein hoga)
-else if (categoryName.startsWith("Search: ")) {
-    q = query(collection(db, "products"));
-} 
-// LOGIC 3: Baaki buttons (Trending, Electronics etc.) ke liye specific filter
-else {
+} else {
+    // UNIVERSAL RULE: Ye line Trending, Western, Electronics sabke liye kaam karegi
+    // Ye wahi products layega jinki category button ke naam se match karti hai
     q = query(collection(db, "products"), where("category", "==", categoryName));
 }
-// --- Yahan tak Paste Karein ---
+// --- Replacement khatam ---
+    
     
         
     
