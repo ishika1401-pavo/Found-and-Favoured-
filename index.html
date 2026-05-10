@@ -229,22 +229,19 @@ window.openCat = function(categoryName) {
     grid.innerHTML = '<p style="grid-column: 1 / -1; text-align:center; padding:20px; color:var(--maroon);">Loading ' + categoryName + '...</p>';
 
     // Firebase Query: Sirf wahi products lao jo is category ke hain;
+
+    // --- LINE 233 SE 247 TAK ISSE BADLEIN ---
+    let q;
+
+    if (categoryName === "Pin Products") {
+        q = query(collection(db, "products"));
+    } else if (categoryName.startsWith("Search: ")) {
+        q = query(collection(db, "products"));
+    } else {
+        q = query(collection(db, "products"), where("category", "==", categoryName));
+    }
+// --- YAHAN TAK ---
     
-let q;
-
-    // --- Yahan se replace karein (Line 234-247) ---
-let q;
-
-if (categoryName === "Pin Products") {
-    // Sab kuch dikhao (Pinned items include ho jayenge)
-    q = query(collection(db, "products")); 
-} else if (categoryName.startsWith("Search: ")) {
-    // Search ke liye logic
-    q = query(collection(db, "products"));
-} else {
-    // UNIVERSAL RULE: Ye line Trending, Western, Electronics sabke liye kaam karegi
-    // Ye wahi products layega jinki category button ke naam se match karti hai
-    q = query(collection(db, "products"), where("category", "==", categoryName));
 }
 // --- Replacement khatam ---
     
