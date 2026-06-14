@@ -234,7 +234,7 @@ window.openCat = function(categoryName) {
     let q;
 
     if (categoryName === "Pin Products") {
-        q = query(collection(db, "products"));
+        q = query(collection(db, "products"), where("pinned", "==", true));
     } else if (categoryName.startsWith("Search: ")) {
         q = query(collection(db, "products"));
     } else {
